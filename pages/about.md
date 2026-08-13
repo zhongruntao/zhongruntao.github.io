@@ -36,8 +36,4 @@ title: 关于
 - MathJax 数学公式渲染
 - PWA 离线缓存支持
 
-## 致谢
-
-感谢 [jiancai](https://blog.jiancai.life/) 的灵感与启发。
-
 > 天空一声巨响，作者闪亮登场
