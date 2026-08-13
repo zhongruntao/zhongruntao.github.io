@@ -69,7 +69,7 @@
  ```yaml
  title: 我的博客                    # 站点标题，显示在浏览器标签页和页头
  description: 我的博客              # 站点描述，用于 SEO meta 标签
- keywords: runtao.zhong,Blog,Java   # 关键词，逗号分隔，用于 SEO
+keywords: runtao.zhong,Blog,Jekyll   # 关键词，逗号分隔，用于 SEO
  author: runtao.zhong               # 作者名称，显示在文章页和 meta 标签
  footerText: '联系我（email）: ...'  # 页脚文字，支持 HTML（如 mailto 链接）
  ```
@@ -157,7 +157,7 @@
  文章放在 `_posts` 目录下，文件命名格式为 `yyyy-MM-dd-标题.md`，例如：
 
  ```
- _posts/2023-06-27-my-first-post.md
+ _posts/2026-08-13-my-first-post.md
  ```
 
  ### Front Matter
@@ -169,6 +169,8 @@
  layout: mypost
  title: 文章标题
  categories: [分类1, 分类2]
+ author: jiancai.zhong
+ date: 2026-08-13
  ---
 
  正文从这里开始，使用 Markdown 格式书写。
@@ -176,15 +178,17 @@
 
  字段说明：
 
- | 字段 | 必填 | 说明 |
- |------|------|------|
- | `layout` | 是 | 固定为 `mypost` |
- | `title` | 是 | 文章标题，显示在页面和列表中 |
+ | 字段         | 必填 | 说明 |
+ |--------------|------|------|
+ | `layout`     | 是 | 固定为 `mypost` |
+ | `title`      | 是 | 文章标题，显示在页面和列表中 |
  | `categories` | 否 | 分类列表，多个用逗号分隔，会自动归入分类页 |
+ | author       | 否 | 文章作者，不写则使用全局 site.author |
+ | date         | 否 | 发布日期，默认取文件名中的日期 |
 
  ### Markdown 语法
 
- 参考示例文章 [_posts/2023-06-27-md的使用.md](_posts/2023-06-27-md的使用.md)，涵盖了标题、加粗、列表、代码块、表格、引用、图片等全部常用语法。
+ 参考示例文章 [_posts/2026-08-13-md的使用.md](_posts/2026-08-13-md的使用.md)，涵盖了标题、加粗、列表、代码块、表格、引用、图片等全部常用语法。
 
  ## 静态资源
 
@@ -194,8 +198,8 @@
 
  | 文章文件名 | 资源目录 |
  |-----------|----------|
- | `2023-06-27-my-post.md` | `posts/2023/06/27/` |
- | `2022-12-03-hello.md` | `posts/2022/12/03/` |
+ | `2026-08-13-my-post.md` | `posts/2026/08/13/` |
+ | `2026-08-13-hello.md` | `posts/2026/08/13/` |
 
  在文章中通过相对路径引用：
 
