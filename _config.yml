@@ -3,9 +3,9 @@ encoding: utf-8
 # SEO相关信息
 title: 我的博客
 description: 我的博客
-keywords: su,Blog,Java,Html,JavaScript
-author: su
-footerText: '联系我（email）: su'
+keywords: runtao.zhong,Blog,Java,Html,JavaScript
+author: runtao.zhong
+footerText: '联系我（email）: runtao.zhong'
 
 # 这些不要动
 permalink: /posts/:year/:month/:day/:title.html

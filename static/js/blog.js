@@ -2,7 +2,7 @@
 ;(function () {
   var style1 = 'background:#4BB596;color:#ffffff;border-radius: 2px;'
   var style2 = 'color:auto;'
-  var author = ' zjc'
+  var author = ' runtao.zhong'
   console.info('%c Author %c' + author, style1, style2)
 })()
 
