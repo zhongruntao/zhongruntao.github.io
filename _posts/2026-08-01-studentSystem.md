@@ -1,9 +1,8 @@
 ---
 layout: mypost
 title: 单表命令
-categories: [MySQL]
+categories: [C]
 date: 2026-08-03
-tags: [MySQL, SQL]
 ---
 
 ### 功能设计

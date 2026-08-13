@@ -1,10 +1,9 @@
 ---
 layout: mypost
 title: VMware 配置 Ubuntu 24 静态 IP（NAT 模式）
-categories: [Linux, VMware]
+categories: [VMware, Ubuntu, Linux]
 author: jiancai.zhong
 date: 2026-08-13
-tags: [VMware, Ubuntu, Linux, 网络]
 ---
 
 > Ubuntu24 使用 **netplan**，yaml 格式**严格缩进，不能用 Tab，只能空格**！
