@@ -2,7 +2,6 @@
 layout: mypost
 title: studentSystem
 categories: [C语言]
-author: runtao.zhong
 date: 2026-08-01
 ---
 

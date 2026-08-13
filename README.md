@@ -169,7 +169,7 @@ keywords: runtao.zhong,Blog,Jekyll   # 关键词，逗号分隔，用于 SEO
  layout: mypost
  title: 文章标题
  categories: [分类1, 分类2]
- author: jiancai.zhong
+ author: jiancai.zhong    # 可选，不写则使用全局 author
  date: 2026-08-13
  ---
 
@@ -183,7 +183,7 @@ keywords: runtao.zhong,Blog,Jekyll   # 关键词，逗号分隔，用于 SEO
  | `layout`     | 是 | 固定为 `mypost` |
  | `title`      | 是 | 文章标题，显示在页面和列表中 |
  | `categories` | 否 | 分类列表，多个用逗号分隔，会自动归入分类页 |
- | author       | 否 | 文章作者，不写则使用全局 site.author |
+ | author       | 否 | 文章作者，不写则使用全局 site.author（与全局相同则无需填写） |
  | date         | 否 | 发布日期，默认取文件名中的日期 |
 
  ### Markdown 语法
