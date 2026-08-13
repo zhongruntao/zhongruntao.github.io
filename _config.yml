@@ -5,7 +5,7 @@ title: 我的博客
 description: 我的博客
 keywords: runtao.zhong,Blog,Java,Html,JavaScript
 author: runtao.zhong
-footerText: '联系我（email）: runtao.zhong'
+footerText: '联系我（email）: runtao.zhong@email.cn'
 
 # 这些不要动
 permalink: /posts/:year/:month/:day/:title.html
