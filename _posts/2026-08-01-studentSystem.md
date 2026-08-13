@@ -1,11 +1,12 @@
 ---
 layout: mypost
 title: 单表命令
-categories: [C]
+categories: [ C ]
 date: 2026-08-03
 ---
 
 ### 功能设计
+
 搭建一个简单的学生管理系统，包含以下功能：
 
 1. **增加学生** `add_student`
