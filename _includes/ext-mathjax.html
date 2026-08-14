@@ -15,29 +15,27 @@
     outline: 0;
   }
 </style>
-<script type="text/x-mathjax-config">
-  MathJax.Hub.Config({
-    showProcessingMessages: false,
-    messageStyle: "none",
-    tex2jax: {
+<script>
+  window.MathJax = {
+    tex: {
       inlineMath: [ ['$','$'], ["\\(","\\)"] ],
       displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
       skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'a']
     },
-    "HTML-CSS": {
-      showMathMenu: false
+    svg: { fontCache: 'global' },
+    startup: {
+      pageReady: () => {
+        return MathJax.startup.defaultPageReady().then(() => {
+          // 父级元素添加类名，便于css控制
+          document.querySelectorAll('mjx-container').forEach(el => {
+            el.parentNode.classList.add('has-jax');
+          });
+        });
+      }
     }
-  });
-  // 父级元素添加类名，便于css控制
-  MathJax.Hub.Queue(function() {
-    var all = MathJax.Hub.getAllJax();
-    var i = 0;
-    for(i=0; i < all.length; i += 1) {
-      all[i].SourceElement().parentNode.className += ' has-jax';
-    }
-  });
+  };
 </script>
 <script
-  type="text/javascript"
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"
+  id="MathJax-script" async
+  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"
 ></script>

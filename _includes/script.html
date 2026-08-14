@@ -19,3 +19,7 @@
     {% include ext-mathjax.html %}
   {% endif %}
 {% endif %}
+
+{%- if site.extServiceWorker -%}
+  {% include ext-serviceWorker.html %}
+{% endif -%}
