@@ -137,13 +137,15 @@ input:-webkit-autofill {
   font-size: 14px;
 }
 
-.footer-center{
-width: 680px; 
-text-align: center;
+.footer-center {
+  width: 100%;
+  max-width: 680px;
+  text-align: center;
 }
 
-.footer-left{
-width: 680px; 
+.footer-left {
+  width: 100%;
+  max-width: 680px;
 }
 
 .footer a {
@@ -198,6 +200,6 @@ width: 680px;
   .header .menu a {
     margin: 2px 5px;
     font-size: 15px;
+    line-height: 1.8;
   }
 }
-
