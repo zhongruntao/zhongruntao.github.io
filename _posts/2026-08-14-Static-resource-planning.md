@@ -47,3 +47,4 @@ date: 2026-08-13
 registration.setCachePeriod(getSeconds(this.resourceProperties.getCache().getPeriod()));
 registration.setCacheControl(this.resourceProperties.getCache().getCacheControl().toHttpCacheControl());
 registration.setUseLastModified(this.resourceProperties.getCache().isUseLastModified());
+```
