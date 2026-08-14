@@ -3,17 +3,17 @@ layout: mypost
 title: 关于
 ---
 
-## 关于我
+### 关于我
 
 你好，我是 **runtao.zhong**，一名热爱技术的开发者。
 
 这个博客是我的个人技术空间，用来记录学习和工作中的所思所得。在这里你会找到关于编程、工具使用、问题排查等方面的文章。
 
-## 联系方式
+### 联系方式
 
 - Email：[runtao.zhong@email.cn](mailto:runtao.zhong@email.cn)
 
-## 关于博客
+### 关于博客
 
 本博客基于 [Jekyll](https://jekyllrb.com/) 构建，纯静态站点，轻量且高效。
 
