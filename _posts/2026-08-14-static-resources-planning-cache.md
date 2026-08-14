@@ -20,7 +20,7 @@ spring.web.resources.add-mappings=true
 spring.web.resources.cache.cachecontrol.max-age=3600
 ```  
 
-#### 判断服务器和1浏览器资源是否变化
+#### 判断服务器和浏览器资源是否变化
 
 ```java
 //默认true,如果last-modified时间的资源相同,返回304
