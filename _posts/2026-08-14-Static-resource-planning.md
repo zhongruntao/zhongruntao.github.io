@@ -47,4 +47,18 @@ date: 2026-08-13
 registration.setCachePeriod(getSeconds(this.resourceProperties.getCache().getPeriod()));
 registration.setCacheControl(this.resourceProperties.getCache().getCacheControl().toHttpCacheControl());
 registration.setUseLastModified(this.resourceProperties.getCache().isUseLastModified());
+````
+#### 欢迎页访问路径
+
+```java
+// 默认在静态资源中添加
+index.html
 ```
+ 
+#### Favicon(网站图标)路径
+
+```java
+// 默认在静态资源中添加
+favicon.ico
+```
+
