@@ -100,10 +100,14 @@ blog.addLoadEvent(function () {
       let r1 = new RegExp(blog.encodeRegChar(key), 'gi')
       let r2 = new RegExp(blog.encodeRegChar(key), 'i')
 
+      // 转义替换字符串中的 $ ，避免被 String.replace 当作特殊模式解释
+      let highlightKey = key.replace(/\$/g, '$$$$')
+      let h1h2 = h1 + highlightKey + h2
+
       // 标题全局替换
       if (r1.test(title)) {
         hide = false
-        dom_title.innerHTML = title.replace(r1, h1 + key + h2)
+        dom_title.innerHTML = title.replace(r1, h1h2)
       }
       // 内容先找到第一个，然后确定100个字符，再对这100个字符做全局替换
       let cResult = r2.exec(content)
@@ -117,7 +121,7 @@ blog.addLoadEvent(function () {
           right = right - left
         }
         content = content.substring(left, right)
-        dom_content.innerHTML = content.replace(r1, h1 + key + h2) + '...'
+        dom_content.innerHTML = content.replace(r1, h1h2) + '...'
       }
       // 内容未命中标题命中，内容直接展示前100个字符
       if (!cResult && !hide && content) {
