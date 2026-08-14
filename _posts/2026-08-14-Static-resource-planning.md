@@ -50,14 +50,14 @@ registration.setUseLastModified(this.resourceProperties.getCache().isUseLastModi
 ````
 #### 欢迎页访问路径
 
-```java
+```
 // 默认在静态资源中添加
 index.html
 ```
  
 #### Favicon(网站图标)路径
 
-```java
+```
 // 默认在静态资源中添加
 favicon.ico
 ```
