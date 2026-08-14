@@ -5,7 +5,7 @@ categories: [ SpringBoot, Logback ]
 date: 2026-08-13
 ---
 
-### SpringMVC 配置与开发模式总结ll
+### SpringMVC 配置与开发模式总结
 
 #### 三种配置方式
 
