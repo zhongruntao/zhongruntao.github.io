@@ -30,13 +30,13 @@ Ant 风格的路径模式语法具有以下规则：
 
 ```java
 //Web接口测试控制器
-  @GetMapping("/a/b/?/{p1:[a-f]+}/**")
-    public String hello(HttpServletRequest request, @PathVariable("p1") String path) {
-        log.info("路径变量p1: {}", path);
-        String uri = request.getRequestURI();
-        return uri;
-    }
+@GetMapping("/a/b/?/{p1:[a-f]+}/**")
+public String hello(HttpServletRequest request, @PathVariable("p1") String path) {
+    log.info("路径变量p1: {}", path);
+    String uri = request.getRequestURI();
+    return uri;
+}
 //HttpServletRequest request 是Servlet官方提供的原生HTTP请求对象
-# 第一个参数：把本次HTTP请求的完整原生对象直接注入进来
-# 第二个参数：把路径变量p1的值注入进来，赋值给path
+#第一个参数：把本次HTTP请求的完整原生对象直接注入进来
+#第二个参数：把路径变量p1的值注入进来，赋值给path
 ```
