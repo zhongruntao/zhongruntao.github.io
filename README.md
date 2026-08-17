@@ -10,6 +10,7 @@
 - 文章目录：桌面端固定在右侧，非桌面端从右下角按钮展开
 - Rouge 代码高亮，提供明暗两套配色
 - 文章代码块一键复制
+- 生产构建自动压缩 JS / CSS，并去除产物注释
 - 图片点击全屏预览
 - 文章二维码，手机扫码打开当前文章
 - MathJax 数学公式渲染，本地按需加载
@@ -32,6 +33,8 @@
 ├── 404.md              # 404 页面
 ├── CNAME               # 自定义域名
 ├── Gemfile             # Ruby 依赖
+├── package.json        # 生产构建压缩依赖
+├── scripts/            # 构建辅助脚本
 ├── blog.sh             # 本地预览、构建和 COS 部署脚本
 ├── index.html          # 首页
 └── service-worker.js   # PWA Service Worker
@@ -43,13 +46,17 @@
 
 - Ruby 2.7+
 - Bundler
+- Node.js 18+（仅生产构建和部署压缩需要）
 
 安装依赖并启动本地服务：
 
 ```bash
 bundle install
+npm install
 ./blog.sh run
 ```
+
+`./blog.sh run` 用于本地预览，保留未压缩源码；`./blog.sh build` 和 `./blog.sh deploy` 会先构建 Jekyll，再通过 esbuild 压缩产物中的自定义 JS、CSS 和 `service-worker.js`。源码文件保留注释，方便维护。
 
 默认访问 `http://localhost:8080`。指定端口运行：
 

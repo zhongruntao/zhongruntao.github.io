@@ -30,10 +30,18 @@ jobs:
         with:
           ruby-version: "2.7"
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
       - name: Build Jekyll site
         run: |
           bundle install
           JEKYLL_ENV=production bundle exec jekyll build --destination _site
+          npm ci
+          npm run minify -- _site
 
       - name: Configure Pages
         id: pages
