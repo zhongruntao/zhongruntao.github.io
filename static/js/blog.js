@@ -455,7 +455,7 @@ blog.initPostToc = function () {
   }
 
   var headings = Array.prototype.slice.call(
-    page.querySelectorAll('.post h2, .post h3, .post h4')
+    page.querySelectorAll('.post h3, .post h4, .post h5')
   )
   if (headings.length < 2) {
     return
@@ -464,11 +464,6 @@ blog.initPostToc = function () {
   var aside = document.createElement('aside')
   aside.className = 'post-toc'
   aside.setAttribute('aria-label', '文章目录')
-
-  var title = document.createElement('div')
-  title.className = 'post-toc-title'
-  title.innerText = '目录'
-  aside.appendChild(title)
 
   var list = document.createElement('ul')
   list.className = 'post-toc-list'
