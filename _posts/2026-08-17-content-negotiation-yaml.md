@@ -4,7 +4,7 @@ title: 内容协商-yaml-配置
 categories: [ SpringBoot ]
 ---
 
-下面是这套 YAML 组件的完整步骤和原理讲解，不改代码。
+
 
 ## 一、整体流程（请求 `/person?format=yaml` 时）
 
