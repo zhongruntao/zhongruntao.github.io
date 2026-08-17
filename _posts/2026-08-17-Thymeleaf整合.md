@@ -9,7 +9,7 @@ categories: [ SpringBoot ]
 · 由于SpringBoot使用了嵌入式Servlet容器，所以JSP默认不能使用  
 · 如果需要服务端页面渲染，优先使用模板引擎，如Thymeleaf
 
-![img.png](img.png)
+![img.png](img.webp)
 
 ### 二.Thymeleaf整合
 
@@ -56,5 +56,5 @@ public class ThymeleafController {
 ```
 
 例图:
-![img_2.png](img_2.png)
+![img_2.png](img_2.webp)
 
