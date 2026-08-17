@@ -18,6 +18,9 @@
   {% elsif page.extMath %}
     {% include ext-mathjax.html %}
   {% endif %}
+  {%- if site.extMermaid -%}
+    {% include ext-mermaid.html %}
+  {% endif %}
 {% endif %}
 
 {%- if site.extServiceWorker -%}

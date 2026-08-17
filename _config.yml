@@ -36,6 +36,8 @@ extClickEffect: false
 extAdsense: false
 # 数学公式支持，比较影响加载速度,不需要请设置为false
 extMath: true
+# Mermaid图表渲染，不需要请设置为false
+extMermaid: true
 # PWA离线缓存，不需要请设置为false
 extServiceWorker: true
 

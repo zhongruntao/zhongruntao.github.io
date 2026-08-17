@@ -59,9 +59,9 @@ sequenceDiagram
 Spring MVC 的转换器列表由 `WebMvcConfigurer` 来定制。这里用一个 `@Bean` 返回匿名内部类：
 
 ```java
-builder.configureMessageConvertersList(converters ->converters.
-
-add(new MyYamlHttpMessageConverter()));
+builder.configureMessageConvertersList(converters ->
+        converters.add(new MyYamlHttpMessageConverter())
+);
 ```
 
 原理（这是之前踩坑的重点）：

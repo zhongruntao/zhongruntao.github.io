@@ -37,7 +37,7 @@ public class 类名 implements 接口1, 接口2 {
     // 必须重写接口所有抽象方法，强制使用 public 权限
     @Override
     public 返回值类型 方法名(参数列表) {
-// 完整业务实现
+        // 完整业务实现
     }
 }
 ```
@@ -75,9 +75,7 @@ Inter.method();
 ```java
 // 先new实现类对象，直接用对象调用
 InterImpl ii = new InterImpl();
-ii.
-
-aaa();
+ii.aaa();
 // 如果实现类重写了默认方法，调用的是重写后的逻辑；没重写就走接口默认实现
 ```
 

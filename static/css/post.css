@@ -15,6 +15,14 @@
 .page-post .post > * {
   margin: 18px 0;
 }
+.page-post .mermaid-diagram {
+  overflow: auto;
+  text-align: center;
+}
+.page-post .mermaid-diagram svg {
+  max-width: 100%;
+  height: auto;
+}
 .page-post .post > iframe {
   margin: 0;
   width: 100%;

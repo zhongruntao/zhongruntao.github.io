@@ -24,16 +24,16 @@ new 父类名/接口名() {
 
 #### 4. 实际使用示例
    以Swim接口为例，直接作为方法参数传入，完全不用单独写Student实现类：
-   
+
 ```java
-   // 多态写法，一步完成定义+创建对象
-   Swim s = new Swim() {
-   @Override
-   public void swim() {
-   System.out.println("学生正在游泳");
-   }
-   };
-   
+// 多态写法，一步完成定义+创建对象
+Swim s = new Swim() {
+    @Override
+    public void swim() {
+        System.out.println("学生正在游泳");
+    }
+};
+
 // 直接调用方法
 goSwimming(s);
 

@@ -10,6 +10,7 @@
 - 代码高亮（Rouge 引擎，深浅双套主题）
 - 图片全屏预览，点击文章内图片居中放大
 - MathJax 数学公式渲染
+- Mermaid 图表渲染
 - PWA 离线缓存支持
 
 ## 技术栈
@@ -226,6 +227,7 @@ author: jiancai.zhong # 可选，不写则使用全局 author date: 2026-08-13
 extClickEffect: false   # 点击页面文字冒出特效
 extAdsense: false       # Google Adsense 广告（需在 _includes/ext-adsense.html 配置）
 extMath: true           # MathJax 数学公式渲染（影响加载速度）
+extMermaid: true        # Mermaid 图表渲染
 extServiceWorker: true  # PWA 离线缓存，Service Worker 预缓存站点资源
 ```
 
