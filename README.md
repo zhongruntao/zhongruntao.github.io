@@ -234,6 +234,10 @@ extThemeToggle: true    # 页面右下角主题切换按钮（关闭后仍可点
 extServiceWorker: true  # PWA 离线缓存，Service Worker 预缓存站点资源
 ```
 
+## 文章链接
+
+文章 URL 在构建时根据源 Markdown 文件的 MD5 自动生成，格式为 `/<md5>/`，链接中不包含 `.md` 或 `.html`。源文件内容发生变化后，文章 URL 会随之变化；首页、RSS、sitemap 和文章二维码会自动使用新的 URL。
+
 ## 域名配置
 
 | 方式        | 操作                                                        |
