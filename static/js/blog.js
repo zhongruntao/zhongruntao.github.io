@@ -414,7 +414,7 @@ blog.addLoadEvent(function () {
   if (!document.querySelector('.page-post')) {
     return
   }
-  const list = document.querySelectorAll('.post h1, .post h2')
+  const list = document.querySelectorAll('.post h1, .post h2, .post h3, .post h4')
   for (var i = 0; i < list.length; i++) {
     blog.addEvent(list[i], 'click', function (event) {
       const el = event.target
@@ -427,3 +427,107 @@ blog.addLoadEvent(function () {
     })
   }
 })
+
+// 桌面端文章目录
+blog.initPostToc = function () {
+  var page = document.querySelector('.page-post')
+  if (!page) {
+    return
+  }
+
+  var headings = Array.prototype.slice.call(
+    page.querySelectorAll('.post h2, .post h3, .post h4')
+  )
+  if (headings.length < 2) {
+    return
+  }
+
+  var aside = document.createElement('aside')
+  aside.className = 'post-toc'
+  aside.setAttribute('aria-label', '文章目录')
+
+  var title = document.createElement('div')
+  title.className = 'post-toc-title'
+  title.innerText = '目录'
+  aside.appendChild(title)
+
+  var list = document.createElement('ul')
+  list.className = 'post-toc-list'
+  var links = []
+
+  headings.forEach(function (heading, index) {
+    if (!heading.id) {
+      heading.id = 'toc-heading-' + (index + 1)
+    }
+
+    var item = document.createElement('li')
+    item.className = 'toc-level-' + heading.tagName.toLowerCase()
+
+    var link = document.createElement('a')
+    link.href = '#' + encodeURIComponent(heading.id)
+    link.textContent = heading.textContent
+    link.onclick = function (event) {
+      event.preventDefault()
+      setActive(link)
+      window.scrollTo(0, window.pageYOffset + heading.getBoundingClientRect().top - 16)
+      if (history.replaceState) {
+        history.replaceState({}, '', '#' + encodeURIComponent(heading.id))
+      }
+    }
+
+    links.push(link)
+    item.appendChild(link)
+    list.appendChild(item)
+  })
+
+  aside.appendChild(list)
+  document.body.appendChild(aside)
+
+  var ticking = false
+
+  function setActive(link) {
+    links.forEach(function (item) {
+      blog.removeClass(item, 'active')
+    })
+    blog.addClass(link, 'active')
+  }
+
+  function updateActiveHeading() {
+    ticking = false
+
+    var scrolledToBottom =
+      window.innerHeight + window.pageYOffset >=
+      document.documentElement.scrollHeight - 4
+
+    if (scrolledToBottom) {
+      setActive(links[links.length - 1])
+      return
+    }
+
+    var activeLink = null
+    links.forEach(function (link, index) {
+      if (headings[index].getBoundingClientRect().top <= 120) {
+        activeLink = link
+      }
+    })
+
+    if (activeLink) {
+      setActive(activeLink)
+    } else {
+      links.forEach(function (item) {
+        blog.removeClass(item, 'active')
+      })
+    }
+  }
+
+  blog.addEvent(window, 'scroll', function () {
+    if (!ticking) {
+      ticking = true
+      window.requestAnimationFrame(updateActiveHeading)
+    }
+  })
+
+  updateActiveHeading()
+}
+
+blog.addLoadEvent(blog.initPostToc)
