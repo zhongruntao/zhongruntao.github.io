@@ -52,7 +52,9 @@
       tex: {
         inlineMath: [['$', '$'], ['\\(', '\\)']],
         displayMath: [['$$', '$$'], ['\\[', '\\]']],
-        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'a']
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'a']
       },
       svg: { fontCache: 'global' },
       startup: {
@@ -70,7 +72,7 @@
     var script = document.createElement('script')
     script.id = 'MathJax-script'
     script.async = true
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js'
+    script.src = blog.baseurl + '/static/js/vendor/mathjax-3.2.2.tex-svg-full.js?t=' + blog.buildAt
     script.onerror = function () {
       console.error('MathJax加载失败')
     }

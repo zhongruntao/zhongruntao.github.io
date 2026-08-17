@@ -69,7 +69,8 @@ self.addEventListener('fetch', function (event) {
 
   event.respondWith(
     caches.open(cacheKey).then(function (cache) {
-      return cache.match(request).then(function (cachedResponse) {
+      var requestCacheUrl = new URL(request.url).pathname
+      return cache.match(requestCacheUrl).then(function (cachedResponse) {
         if (cachedResponse) {
           return cachedResponse
         }
@@ -77,12 +78,16 @@ self.addEventListener('fetch', function (event) {
         return fetch(request)
           .then(function (response) {
             if (response && response.ok) {
-              cache.put(request, response.clone())
+              cache.put(requestCacheUrl, response.clone())
             }
             return response
           })
           .catch(function () {
-            return cache.match(baseUrl + '/').then(function (homeResponse) {
+            if (request.mode !== 'navigate') {
+              return Response.error()
+            }
+
+            return cache.match(baseUrl + '/index.html').then(function (homeResponse) {
               return homeResponse || Response.error()
             })
           })
@@ -108,7 +113,8 @@ function collectCacheUrls(html) {
         continue
       }
       url.hash = ''
-      urls.add(url.pathname + url.search)
+      url.search = ''
+      urls.add(url.pathname)
     } catch (error) {
       // 无效资源地址不阻塞 Service Worker 安装
     }
