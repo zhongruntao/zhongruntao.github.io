@@ -227,7 +227,6 @@ author: jiancai.zhong # 可选，不写则使用全局 author date: 2026-08-13
 
 ```yaml
 extClickEffect: false   # 点击页面文字冒出特效
-extAdsense: false       # Google Adsense 广告（需在 _includes/ext-adsense.html 配置）
 extMath: true           # MathJax 数学公式渲染（影响加载速度）
 extMermaid: true        # Mermaid 图表渲染
 extQrCode: true         # 文章二维码

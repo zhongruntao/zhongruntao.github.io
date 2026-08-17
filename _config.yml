@@ -1,8 +1,8 @@
 encoding: utf-8
 
 # SEO相关信息
-title: 我的博客
-description: 我的博客
+title: 知行合一
+description: 知行合一
 keywords: runtao.zhong,Blog,Java,Html,JavaScript,Jekyll
 author: runtao.zhong
 footerText: '联系我（email）: <a href="mailto:runtao.zhong@email.cn">runtao.zhong@email.cn</a>'
@@ -33,7 +33,6 @@ menu:
 
 # 点击页面文字冒出特效,不需要请设置为false
 extClickEffect: false
-extAdsense: false
 # 数学公式支持，比较影响加载速度,不需要请设置为false
 extMath: true
 # Mermaid图表渲染，不需要请设置为false
