@@ -270,7 +270,9 @@
     color: #666666;
     font-size: 13px;
     line-height: 1.55;
-    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .post-toc-list a:hover,
   .post-toc-list a.active {

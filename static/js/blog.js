@@ -480,6 +480,7 @@ blog.initPostToc = function () {
     var link = document.createElement('a')
     link.href = '#' + encodeURIComponent(heading.id)
     link.textContent = heading.textContent
+    link.title = heading.textContent
     link.onclick = function (event) {
       event.preventDefault()
       setActive(link)
