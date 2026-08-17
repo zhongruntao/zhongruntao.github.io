@@ -4,7 +4,7 @@ require "digest"
 
 # Article URLs use the MD5 digest of the source Markdown file. The digest is
 # calculated on every build and is never written back to the source file.
-Jekyll::Hooks.register :posts, :post_read do |document|
+Jekyll::Hooks.register :posts, :post_init do |document|
   # Normalize CRLF checkouts on Windows and LF checkouts on the server so both
   # produce the same article URL.
   source = File.read(document.path, mode: "rb").gsub("\r\n", "\n")
