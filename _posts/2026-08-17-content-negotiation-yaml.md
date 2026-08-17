@@ -30,7 +30,7 @@ sequenceDiagram
 
 ### 二、每个文件的作用和原理
 
-  1. `E:\springboot\deom\src\main\java\cn\maver\deom\compoment\MyYamlHttpMessageConverter.java` —— 核心组件
+1. `E:\springboot\deom\src\main\java\cn\maver\deom\compoment\MyYamlHttpMessageConverter.java` —— 核心组件
 
 这是 **自定义的 HTTP 消息转换器**。Spring MVC 里，任何"Java 对象 ⇄ 响应/请求体字节"的转换都靠 `HttpMessageConverter`
 接口完成，JSON 的转换器、String 的转换器都是它的实现。

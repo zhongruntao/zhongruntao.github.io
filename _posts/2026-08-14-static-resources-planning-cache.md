@@ -15,6 +15,7 @@ spring.web.resources.add-mappings=true
 #### 设置缓存
 
 **例如**
+
 ```properties
 # 设置缓存时间，单位为秒
 spring.web.resources.cache.cachecontrol.max-age=3600

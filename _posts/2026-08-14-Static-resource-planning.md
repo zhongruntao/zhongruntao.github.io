@@ -48,6 +48,7 @@ registration.setCachePeriod(getSeconds(this.resourceProperties.getCache().getPer
 registration.setCacheControl(this.resourceProperties.getCache().getCacheControl().toHttpCacheControl());
 registration.setUseLastModified(this.resourceProperties.getCache().isUseLastModified());
 ```
+
 #### 欢迎页访问路径
 
 ```text
@@ -55,7 +56,7 @@ registration.setUseLastModified(this.resourceProperties.getCache().isUseLastModi
 index.html
 ```
 
-#### Favicon(网站图标)路径
+#### Favicon (网站图标)路径
 
 ```text
 // 默认在静态资源中添加
