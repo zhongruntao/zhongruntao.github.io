@@ -6,7 +6,7 @@ categories: [ SpringBoot ]
 
 
 
-## 一、整体流程（请求 `/person?format=yaml` 时）
+### 一、整体流程（请求 `/person?format=yaml` 时）
 
 一次请求从浏览器到返回 YAML，会经历下面这条链：
 
@@ -30,9 +30,9 @@ sequenceDiagram
     D -->> B: HTTP 200 + YAML 内容
 ```
 
-## 二、每个文件的作用和原理
+### 二、每个文件的作用和原理
 
-### 1. `E:\springboot\deom\src\main\java\cn\maver\deom\compoment\MyYamlHttpMessageConverter.java` —— 核心组件
+#### 1. `E:\springboot\deom\src\main\java\cn\maver\deom\compoment\MyYamlHttpMessageConverter.java` —— 核心组件
 
 这是 **自定义的 HTTP 消息转换器**。Spring MVC 里，任何"Java 对象 ⇄ 响应/请求体字节"的转换都靠 `HttpMessageConverter`
 接口完成，JSON 的转换器、String 的转换器都是它的实现。
@@ -54,7 +54,7 @@ sequenceDiagram
   即可。`writeValue(输出流, 对象)` 一行就把对象序列化成 YAML 写进响应流。
 - `try (OutputStream os = outputMessage.getBody())` 是 try-with-resources：自动关闭输出流。
 
-### 2. `E:\springboot\deom\src\main\java\cn\maver\deom\config\MyConfig.java` —— 把转换器注册进 MVC
+#### 2. `E:\springboot\deom\src\main\java\cn\maver\deom\config\MyConfig.java` —— 把转换器注册进 MVC
 
 Spring MVC 的转换器列表由 `WebMvcConfigurer` 来定制。这里用一个 `@Bean` 返回匿名内部类：
 
@@ -74,36 +74,7 @@ builder.configureMessageConvertersList(converters ->
 - `configureMessageConvertersList(...)` 是在 **默认转换器全部组装完之后**再对最终列表做追加，所以你的 YAML 转换器排在
   JSON **后面**——这就是为什么默认请求仍是 JSON，只有明确要 YAML 时才走你的转换器。
 
-### 3. `E:\springboot\deom\src\main\java\cn\maver\deom\controller\Controller1.java` —— 控制器
-
-- `@RestController` + `@GetMapping("/person")`：把 `/person` 请求映射到 `person()`，返回 `Person` 对象。
-- **注意**：方法返回的是对象而不是字符串，所以 Spring 必须靠"转换器"来决定怎么写回响应——这正是前面转换器链起作用的地方。
-- 类里的 `main()` 是一个 **独立的本地小测试**：不经过 Web，直接用 `YAMLMapper` 把对象序列化成 YAML 打印出来，用来验证
-  Jackson 3 的 YAML 序列化是否正常。
-
-### 4. `E:\springboot\deom\src\main\java\cn\maver\deom\bean\Person.java` —— 被序列化的实体
-
-一个普通的 POJO：`@Data`（Lombok 生成 getter/setter）、`@JacksonXmlRootElement`（给 XML 输出用的根节点注解）。字段 `name`、`age`
-就是 YAML/JSON 里出现的属性。注意 `import jdk.jfr.DataAmount;` 是多余的，不影响功能。
-
-### 5. `E:\springboot\deom\src\main\resources\application.properties` —— 内容协商配置
-
-```properties
-spring.mvc.contentnegotiation.favor-parameter=true        # ① 开启"用查询参数决定格式"
-spring.mvc.contentnegotiation.parameter-name=format       # ② 参数名是 format（默认就是这个，可省略）
-spring.mvc.contentnegotiation.media-types.yaml=text/yaml  # ③ 把 format=yaml 映射成 text/yaml
-```
-
-原理（内容协商 Content Negotiation）：服务器收到请求时，要回答"客户端到底想要什么格式？"。Spring 有几种判断来源，按优先级依次尝试：
-
-1. **Accept 请求头**（`Accept: application/json`）
-2. **URL 扩展名**（`.json`、`.xml`）
-3. **format 查询参数**（`?format=yaml`）—— **默认关闭**，必须 `favor-parameter=true` 才启用
-
-第 ③ 行是关键：Spring 自己 **不会**自动把 `yaml` 这个值映射成媒体类型，必须显式告诉它 `yaml → text/yaml`，这样
-`ParameterContentNegotiationStrategy` 才能解析出 `text/yaml`，进而匹配到你的转换器（它只支持 `text/yaml`）。
-
-## 三、为什么"默认请求返回 JSON，加参数才返回 YAML"
+###   三、为什么"默认请求返回 JSON，加参数才返回 YAML"
 
 - 不加参数时：没有 `format` 参数，协商落到 `Accept: */*`，Spring 从转换器列表里挑"最合适"的——JSON 转换器排在前面，于是返回
   `application/json`。
@@ -111,7 +82,7 @@ spring.mvc.contentnegotiation.media-types.yaml=text/yaml  # ③ 把 format=yaml 
   不兼容），只有你的 `MyYamlHttpMessageConverter` 支持，于是选中它返回 YAML。
 - 加 `?format=json` 时：`json` 是 Spring 内置认识的扩展名，映射成 `application/json`，走默认 JSON 转换器。
 
-## 四、一句话总结
+### 四、一句话总结
 
 > `application.properties` 告诉 Spring"允许用 `?format=` 参数来协商格式，并且 `yaml` 对应 `text/yaml`"；`MyConfig` 用
 > Spring 7 的新 API 把你的自定义转换器 **追加**到默认转换器之后；请求进来后 Spring 先做内容协商确定 `text/yaml`，再按顺序找到
