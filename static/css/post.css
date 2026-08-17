@@ -128,6 +128,54 @@
   border-radius: unset;
   color: inherit;
 }
+.page-post .highlight,
+.page-post .code-block {
+  position: relative;
+}
+.page-post .code-copy-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  appearance: none;
+  box-sizing: border-box;
+  width: 72px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.86);
+  color: #333333;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 200ms ease, background-color 200ms ease, color 200ms ease;
+}
+.page-post .code-copy-button:hover,
+.page-post .code-copy-button:focus-visible {
+  opacity: 1;
+}
+.page-post .code-copy-button.copied {
+  color: #106c2a;
+  border-color: rgba(16, 108, 42, 0.3);
+  opacity: 1;
+}
+.page-post .code-copy-button.failed {
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.3);
+  opacity: 1;
+}
+.page-post .code-copy-button svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
 .page-post hr {
   border: none;
   height: 3px;
