@@ -414,9 +414,15 @@ blog.addLoadEvent(function () {
 // 切换夜间模式
 blog.addLoadEvent(function () {
   var $logo = document.querySelector('.header .logo')
-  blog.addEvent($logo, 'click', function () {
+  var $themeToggle = document.getElementById('theme-toggle')
+  function toggleTheme() {
     blog.setDarkTheme(!blog.darkTheme)
     localStorage.darkTheme = blog.darkTheme
+  }
+  blog.addEvent($logo, 'click', toggleTheme)
+  blog.addEvent($themeToggle, 'click', function (event) {
+    toggleTheme()
+    event.stopPropagation()
   })
 })
 

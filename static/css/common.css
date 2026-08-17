@@ -189,9 +189,21 @@ input:-webkit-autofill {
   width: 18px;
   height: 18px;
 }
-#footer-actions #to-top {
+#theme-toggle {
   position: absolute;
   top: -42px;
+  right: 0;
+}
+#theme-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+#theme-toggle .theme-icon-dark {
+  display: none;
+}
+#footer-actions #to-top {
+  position: absolute;
+  top: -84px;
   right: 0;
   transform: translateY(8px);
   opacity: 0;

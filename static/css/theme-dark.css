@@ -98,6 +98,12 @@ html.dark #footer-actions #to-top.show {
   opacity: 0.6;
   background-color: #4c4c4c;
 }
+html.dark #theme-toggle .theme-icon-light {
+  display: none;
+}
+html.dark #theme-toggle .theme-icon-dark {
+  display: block;
+}
 html.dark #to-top > span:last-child {
   background-color: #4c4c4c;
 }
