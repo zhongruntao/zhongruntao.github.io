@@ -4,8 +4,6 @@ title: 内容协商-yaml-配置
 categories: [ SpringBoot ]
 ---
 
-
-
 ### 一、整体流程（请求 `/person?format=yaml` 时）
 
 一次请求从浏览器到返回 YAML，会经历下面这条链：
@@ -60,8 +58,10 @@ Spring MVC 的转换器列表由 `WebMvcConfigurer` 来定制。这里用一个 
 
 ```java
 builder.configureMessageConvertersList(converters ->
-        converters.add(new MyYamlHttpMessageConverter())
-);
+        converters.
+
+add(new MyYamlHttpMessageConverter())
+        );
 ```
 
 原理（这是之前踩坑的重点）：
@@ -74,7 +74,7 @@ builder.configureMessageConvertersList(converters ->
 - `configureMessageConvertersList(...)` 是在 **默认转换器全部组装完之后**再对最终列表做追加，所以你的 YAML 转换器排在
   JSON **后面**——这就是为什么默认请求仍是 JSON，只有明确要 YAML 时才走你的转换器。
 
-###   三、为什么"默认请求返回 JSON，加参数才返回 YAML"
+### 三、为什么"默认请求返回 JSON，加参数才返回 YAML"
 
 - 不加参数时：没有 `format` 参数，协商落到 `Accept: */*`，Spring 从转换器列表里挑"最合适"的——JSON 转换器排在前面，于是返回
   `application/json`。
