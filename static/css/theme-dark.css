@@ -73,6 +73,13 @@ html.dark .page-post iframe {
 html.dark .post-toc {
   border-left: 2px solid #30363d;
 }
+@media screen and (max-width: 1199px) {
+  html.dark .post-toc {
+    border-left: 0;
+    background-color: #161b22;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+  }
+}
 html.dark .post-toc-list a {
   color: #8b949e;
 }
