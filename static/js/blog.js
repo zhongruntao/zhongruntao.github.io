@@ -248,6 +248,7 @@ blog.addLoadEvent(function () {
 
 // 回到顶部
 blog.addLoadEvent(function () {
+  var actionsDOM = document.getElementById('footer-actions')
   var toTopDOM = document.getElementById('to-top')
 
   function getScrollTop() {
@@ -259,9 +260,9 @@ blog.addLoadEvent(function () {
   }
   function ckeckToShow() {
     if (getScrollTop() > 200) {
-      blog.addClass(toTopDOM, 'show')
+      blog.addClass(actionsDOM, 'show')
     } else {
-      blog.removeClass(toTopDOM, 'show')
+      blog.removeClass(actionsDOM, 'show')
     }
   }
   blog.addEvent(window, 'scroll', ckeckToShow)
@@ -271,6 +272,17 @@ blog.addLoadEvent(function () {
     function (event) {
       window.scrollTo(0, 0)
       event.stopPropagation()
+    },
+    true
+  )
+  blog.addEvent(
+    toTopDOM,
+    'keydown',
+    function (event) {
+      if (event.key === 'Enter' || event.key === ' ' || event.keyCode === 13 || event.keyCode === 32) {
+        event.preventDefault()
+        window.scrollTo(0, 0)
+      }
     },
     true
   )

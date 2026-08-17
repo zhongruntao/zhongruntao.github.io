@@ -93,10 +93,28 @@ html.dark .page-search #search-input::-webkit-input-placeholder {
 html.dark .page-search .list-search .content {
   color: #a6aeb7;
 }
-html.dark #to-top {
+html.dark #footer-actions button,
+html.dark #footer-actions #to-top {
   opacity: 0.6;
   background-color: #4c4c4c;
 }
 html.dark #to-top > span:last-child {
   background-color: #4c4c4c;
+}
+html.dark .qrcode-dialog {
+  background-color: #161b22;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+}
+html.dark .qrcode-text {
+  color: #f0f6fc;
+}
+html.dark .qrcode-link {
+  color: #8b949e;
+}
+html.dark .qrcode-close {
+  color: #8b949e;
+}
+html.dark .qrcode-close:hover {
+  color: #ffffff;
+  background-color: #21262d;
 }

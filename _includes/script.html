@@ -21,6 +21,9 @@
   {%- if site.extMermaid -%}
     {% include ext-mermaid.html %}
   {% endif %}
+  {%- if site.extQrCode -%}
+    {% include ext-qrcode.html %}
+  {% endif %}
 {% endif %}
 
 {%- if site.extServiceWorker -%}

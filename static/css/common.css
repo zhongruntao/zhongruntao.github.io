@@ -154,23 +154,48 @@ input:-webkit-autofill {
   padding: 0 4px;
   white-space: nowrap;
 }
-#to-top {
+#footer-actions {
   position: fixed;
   z-index: 99;
   right: 16px;
   bottom: 12px;
+  display: flex;
+  gap: 8px;
+  transform: translateY(66px);
+  transition: transform 200ms ease-in-out;
+}
+#footer-actions.show {
+  transform: translateY(0);
+}
+#footer-actions button,
+#footer-actions #to-top {
   width: 34px;
   height: 34px;
   cursor: pointer;
   border-radius: 10%;
   background-color: #000000;
+  border: 0;
+  color: #ffffff;
   opacity: 0.45;
   overflow: hidden;
-  transform: translateY(66px);
-  transition: transform 200ms ease-in-out;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-#to-top.show {
-  transform: translateY(0);
+#footer-actions button:hover,
+#footer-actions #to-top:hover {
+  opacity: 0.7;
+}
+#footer-actions button[hidden] {
+  display: none;
+}
+#qrcode-toggle svg {
+  width: 18px;
+  height: 18px;
+}
+#to-top {
+  position: relative;
 }
 #to-top > span {
   display: block;
