@@ -30,7 +30,7 @@ sequenceDiagram
 
 ### 二、每个文件的作用和原理
 
-#### 1. `E:\springboot\deom\src\main\java\cn\maver\deom\compoment\MyYamlHttpMessageConverter.java` —— 核心组件
+1. `E:\springboot\deom\src\main\java\cn\maver\deom\compoment\MyYamlHttpMessageConverter.java` —— 核心组件
 
 这是 **自定义的 HTTP 消息转换器**。Spring MVC 里，任何"Java 对象 ⇄ 响应/请求体字节"的转换都靠 `HttpMessageConverter`
 接口完成，JSON 的转换器、String 的转换器都是它的实现。
@@ -52,7 +52,7 @@ sequenceDiagram
   即可。`writeValue(输出流, 对象)` 一行就把对象序列化成 YAML 写进响应流。
 - `try (OutputStream os = outputMessage.getBody())` 是 try-with-resources：自动关闭输出流。
 
-#### 2. `E:\springboot\deom\src\main\java\cn\maver\deom\config\MyConfig.java` —— 把转换器注册进 MVC
+2. `E:\springboot\deom\src\main\java\cn\maver\deom\config\MyConfig.java` —— 把转换器注册进 MVC
 
 Spring MVC 的转换器列表由 `WebMvcConfigurer` 来定制。这里用一个 `@Bean` 返回匿名内部类：
 
