@@ -1,11 +1,13 @@
 <script>
 ;(function () {
   var toggle = document.getElementById('qrcode-toggle')
-  if (!document.querySelector('.page-post') || !toggle) {
+  var actions = document.getElementById('footer-actions')
+  if (!document.querySelector('.page-post') || !toggle || !actions) {
     return
   }
 
   toggle.hidden = false
+  actions.className += ' has-qrcode'
 
   var overlay = null
 

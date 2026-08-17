@@ -231,6 +231,7 @@ extAdsense: false       # Google Adsense 广告（需在 _includes/ext-adsense.h
 extMath: true           # MathJax 数学公式渲染（影响加载速度）
 extMermaid: true        # Mermaid 图表渲染
 extQrCode: true         # 文章二维码
+extThemeToggle: true    # 页面右下角主题切换按钮（关闭后仍可点击头像切换）
 extServiceWorker: true  # PWA 离线缓存，Service Worker 预缓存站点资源
 ```
 

@@ -185,14 +185,17 @@ input:-webkit-autofill {
 #footer-actions button[hidden] {
   display: none;
 }
+#qrcode-toggle {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+#footer-actions.has-theme #qrcode-toggle {
+  top: -42px;
+}
 #qrcode-toggle svg {
   width: 18px;
   height: 18px;
-}
-#theme-toggle {
-  position: absolute;
-  top: -42px;
-  right: 0;
 }
 #theme-toggle svg {
   width: 18px;
@@ -203,12 +206,18 @@ input:-webkit-autofill {
 }
 #footer-actions #to-top {
   position: absolute;
-  top: -84px;
+  top: -42px;
   right: 0;
   transform: translateY(8px);
   opacity: 0;
   visibility: hidden;
   transition: transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out;
+}
+#footer-actions.has-theme.has-qrcode #to-top {
+  top: -84px;
+}
+#footer-actions:not(.has-theme):not(.has-qrcode) #to-top {
+  top: 0;
 }
 #footer-actions #to-top.show {
   transform: translateY(0);

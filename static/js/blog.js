@@ -420,10 +420,12 @@ blog.addLoadEvent(function () {
     localStorage.darkTheme = blog.darkTheme
   }
   blog.addEvent($logo, 'click', toggleTheme)
-  blog.addEvent($themeToggle, 'click', function (event) {
-    toggleTheme()
-    event.stopPropagation()
-  })
+  if ($themeToggle) {
+    blog.addEvent($themeToggle, 'click', function (event) {
+      toggleTheme()
+      event.stopPropagation()
+    })
+  }
 })
 
 // 标题定位

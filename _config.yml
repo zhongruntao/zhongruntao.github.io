@@ -40,6 +40,8 @@ extMath: true
 extMermaid: true
 # 文章二维码，不需要请设置为false
 extQrCode: true
+# 页面右下角主题切换按钮，不需要请设置为false
+extThemeToggle: true
 # PWA离线缓存，不需要请设置为false
 extServiceWorker: true
 
