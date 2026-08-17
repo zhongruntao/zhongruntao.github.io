@@ -94,7 +94,7 @@ html.dark .page-search .list-search .content {
   color: #a6aeb7;
 }
 html.dark #footer-actions button,
-html.dark #footer-actions #to-top {
+html.dark #footer-actions #to-top.show {
   opacity: 0.6;
   background-color: #4c4c4c;
 }

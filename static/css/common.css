@@ -159,8 +159,8 @@ input:-webkit-autofill {
   z-index: 99;
   right: 16px;
   bottom: 12px;
-  display: flex;
-  gap: 8px;
+  width: 34px;
+  height: 34px;
 }
 #footer-actions button,
 #footer-actions #to-top {
@@ -189,13 +189,19 @@ input:-webkit-autofill {
   width: 18px;
   height: 18px;
 }
-#to-top {
-  position: relative;
-  transform: translateY(66px);
-  transition: transform 200ms ease-in-out;
+#footer-actions #to-top {
+  position: absolute;
+  top: -42px;
+  right: 0;
+  transform: translateY(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition: transform 200ms ease-in-out, opacity 200ms ease-in-out, visibility 200ms ease-in-out;
 }
-#to-top.show {
+#footer-actions #to-top.show {
   transform: translateY(0);
+  opacity: 0.45;
+  visibility: visible;
 }
 #to-top > span {
   display: block;
