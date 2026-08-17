@@ -29,30 +29,59 @@
   {%- if page.layout == "page" %}
   <link rel="stylesheet" href="{{site.baseurl}}/static/css/page.css?t={{buildAt}}">
   {%- endif %}
+  {%- if page.search -%}
   <link rel="prefetch" href="{{site.baseurl}}/static/xml/search.xml?t={{ buildAt }}">
   <link rel="prefetch" href="{{site.baseurl}}/static/js/search.js?t={{ buildAt }}">
+  {%- endif -%}
   <script>
+    function readThemePreference() {
+      try {
+        return localStorage.getItem('darkTheme')
+      } catch (error) {
+        return null
+      }
+    }
+
+    var storedThemePreference = readThemePreference()
+
     window.blog = {
       baseurl:"{{site.baseurl}}",
       buildAt:"{{buildAt}}",
       darkTheme: false,
+      getStoredTheme: function () {
+        return storedThemePreference
+      },
+      setStoredTheme: function (dark) {
+        storedThemePreference = dark ? 'true' : 'false'
+        try {
+          localStorage.setItem('darkTheme', storedThemePreference)
+        } catch (error) {
+          // 隐私模式或存储不可用时，仅本次会话内生效
+        }
+      },
       setDarkTheme: function (dark) {
         this.darkTheme = Boolean(dark);
         document.documentElement.className = this.darkTheme ? 'dark': '';
         document.querySelector('meta[name=theme-color]').setAttribute('content', this.darkTheme ? '#2D2E32': '#FFFFFF');
       }
     }
-    if (localStorage.darkTheme !== undefined) {
-      blog.setDarkTheme(localStorage.darkTheme === 'true'); // 记忆值，持久化保存
+    if (blog.getStoredTheme() !== null) {
+      blog.setDarkTheme(blog.getStoredTheme() === 'true'); // 记忆值，持久化保存
     } else {
       blog.setDarkTheme(window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches); // 跟随系统
     }
     if (window.matchMedia) {
-      var media = window.matchMedia('(prefers-color-scheme: dark)');
-      media.addListener(function (ev) {
-        blog.setDarkTheme(ev.currentTarget.matches);
-        localStorage.removeItem('darkTheme');
-      });
+      var media = window.matchMedia('(prefers-color-scheme: dark)');
+      var mediaListener = function (ev) {
+        if (blog.getStoredTheme() === null) {
+          blog.setDarkTheme(ev.currentTarget.matches);
+        }
+      };
+      if (media.addEventListener) {
+        media.addEventListener('change', mediaListener)
+      } else if (media.addListener) {
+        media.addListener(mediaListener)
+      }
     }
   </script>
 </head>

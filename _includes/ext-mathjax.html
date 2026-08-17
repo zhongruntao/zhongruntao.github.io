@@ -1,4 +1,4 @@
-<!-- MathJax数学公式支持 -->
+<!-- MathJax数学公式支持：检测到公式时才加载 -->
 <style>
   .has-jax {
     -webkit-user-select: none;
@@ -16,26 +16,64 @@
   }
 </style>
 <script>
-  window.MathJax = {
-    tex: {
-      inlineMath: [ ['$','$'], ["\\(","\\)"] ],
-      displayMath: [ ['$$','$$'], ["\\[","\\]"] ],
-      skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'a']
-    },
-    svg: { fontCache: 'global' },
-    startup: {
-      pageReady: () => {
-        return MathJax.startup.defaultPageReady().then(() => {
-          // 父级元素添加类名，便于css控制
-          document.querySelectorAll('mjx-container').forEach(el => {
-            el.parentNode.classList.add('has-jax');
-          });
-        });
+  ;(function () {
+    var mathPattern = /\$\$[\s\S]+?\$\$|\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\]|\$(?!\s)(?:\\[\s\S]|[A-Za-z(](?:[^$]*?[^\s$])?)?\$/
+
+    function hasMath() {
+      var post = document.querySelector('.page-post .post')
+      if (!post) {
+        return false
+      }
+
+      var walker = document.createTreeWalker(post, NodeFilter.SHOW_TEXT, {
+        acceptNode: function (node) {
+          var parent = node.parentElement
+          if (!parent || parent.closest('pre, code, script, style, textarea')) {
+            return NodeFilter.FILTER_REJECT
+          }
+          return NodeFilter.FILTER_ACCEPT
+        }
+      })
+
+      var node
+      while ((node = walker.nextNode())) {
+        if (mathPattern.test(node.nodeValue)) {
+          return true
+        }
+      }
+      return false
+    }
+
+    if (!hasMath()) {
+      return
+    }
+
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        skipTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'a']
+      },
+      svg: { fontCache: 'global' },
+      startup: {
+        pageReady: function () {
+          return MathJax.startup.defaultPageReady().then(function () {
+            // 父级元素添加类名，便于css控制
+            document.querySelectorAll('mjx-container').forEach(function (el) {
+              el.parentNode.classList.add('has-jax')
+            })
+          })
+        }
       }
     }
-  };
+
+    var script = document.createElement('script')
+    script.id = 'MathJax-script'
+    script.async = true
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js'
+    script.onerror = function () {
+      console.error('MathJax加载失败')
+    }
+    document.head.appendChild(script)
+  })()
 </script>
-<script
-  id="MathJax-script" async
-  src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"
-></script>

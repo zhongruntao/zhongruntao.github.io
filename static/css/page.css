@@ -77,6 +77,11 @@
   vertical-align: middle;
   opacity: 0;
 }
+.page-search .search-status {
+  padding: 0 0 14px;
+  color: #5a5a5a;
+  font-size: 14px;
+}
 .page-search .list-search li {
   list-style: disc;
   margin-left: 15px;

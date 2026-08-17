@@ -1,152 +1,219 @@
-// 加载所有文章数据，优先使用localStorage缓存
+// 加载全文检索数据，优先使用当前构建版本对应的本地缓存
 function loadAllPostData(callback) {
-  if (localStorage.db && localStorage.dbVersion == blog.buildAt) {
-    console.log('loadAllPostData from localStorage')
-    callback ? callback(localStorage.db) : ''
+  var cache = readCachedPostData()
+  if (cache) {
+    callback(cache)
     return
   }
 
-  console.log('loadAllPostData from ajax')
-  localStorage.removeItem('dbVersion')
-  localStorage.removeItem('db')
+  var controller = new AbortController()
+  var timeoutId = setTimeout(function () {
+    controller.abort()
+  }, 20000)
 
-  blog.ajax(
-    {
-      timeout: 20000,
-      url: blog.baseurl + '/static/xml/search.xml?t=' + blog.buildAt
-    },
-    function (data) {
-      localStorage.db = data
-      localStorage.dbVersion = blog.buildAt
-      callback ? callback(data) : ''
-    },
-    function () {
-      console.error('全文检索数据加载失败...')
-      callback ? callback(null) : ''
+  fetch(blog.baseurl + '/static/xml/search.xml?t=' + blog.buildAt, {
+    credentials: 'same-origin',
+    signal: controller.signal
+  })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error('HTTP ' + response.status)
+      }
+      return response.text()
+    })
+    .then(function (data) {
+      cachePostData(data)
+      callback(data)
+    })
+    .catch(function (error) {
+      console.error('全文检索数据加载失败', error)
+      callback(null)
+    })
+    .finally(function () {
+      clearTimeout(timeoutId)
+    })
+}
+
+function readCachedPostData() {
+  try {
+    if (localStorage.db && localStorage.dbVersion === blog.buildAt) {
+      return localStorage.db
     }
-  )
+  } catch (error) {
+    return null
+  }
+  return null
+}
+
+function cachePostData(data) {
+  try {
+    localStorage.db = data
+    localStorage.dbVersion = blog.buildAt
+  } catch (error) {
+    // 索引过大或存储被禁用时，本次搜索仍然使用内存数据
+  }
 }
 
 // 搜索功能
 blog.addLoadEvent(function () {
-  // 标题等信息
-  let titles = []
-  // 正文内容
-  let contents = []
-  // IOS 键盘中文输入bug
-  let inputLock = false
-  // 输入框
-  let input = document.getElementById('search-input')
+  var titles = []
+  var contents = []
+  var input = document.getElementById('search-input')
+  var status = document.getElementById('search-status')
+  var loadingDOM = document.querySelector('.page-search h1 img')
 
   // 非搜索页面
-  if (!input) {
+  if (!input || !status || !loadingDOM) {
     return
   }
 
-  let loadingDOM = document.querySelector('.page-search h1 img')
+  var ready = false
+  var inputLock = false
+  var searchTimer = null
+
   loadingDOM.style.opacity = 1
+  setStatus('正在加载搜索索引...')
+
   loadAllPostData(function (data) {
-    console.log('loadAllPostData done')
     loadingDOM.style.opacity = 0
+
+    if (data === null) {
+      setStatus('搜索索引加载失败，请刷新重试')
+      return
+    }
+
     titles = parseTitle()
     contents = parseContent(data)
-    search(input.value)
+    ready = true
+    searchNow(input.value)
   })
 
+  function setStatus(text) {
+    status.textContent = text
+    status.hidden = !text
+  }
+
   function parseTitle() {
-    let arr = []
-    let doms = document.querySelectorAll('.list-search .title')
-    for (let i = 0; i < doms.length; i++) {
-      arr.push(doms[i].innerHTML)
-    }
-    return arr
+    return Array.prototype.map.call(document.querySelectorAll('.list-search .title'), function (dom) {
+      return dom.textContent
+    })
   }
 
   function parseContent(data) {
-    let arr = []
-    let root = document.createElement('div')
-    root.innerHTML = data
-    let doms = root.querySelectorAll('li')
-    for (let i = 0; i < doms.length; i++) {
-      arr.push(doms[i].innerHTML)
-    }
-    return arr
+    var root = new DOMParser().parseFromString(data, 'text/html')
+    return Array.prototype.map.call(root.querySelectorAll('li'), function (dom) {
+      return dom.textContent
+    })
   }
 
-  function search(key) {
-    // <>& 替换
+  function escapeHtml(text) {
+    return String(text).replace(/[&<>]/g, function (char) {
+      return { '&': '&amp;', '<': '&lt;', '>': '&gt;' }[char]
+    })
+  }
+
+  function highlight(text, pattern) {
+    var result = ''
+    var lastIndex = 0
+    var match
+
+    while ((match = pattern.exec(text)) !== null) {
+      result += escapeHtml(text.slice(lastIndex, match.index))
+      result += '<span class="hint">' + escapeHtml(match[0]) + '</span>'
+      lastIndex = match.index + match[0].length
+      pattern.lastIndex = lastIndex
+    }
+
+    return result + escapeHtml(text.slice(lastIndex))
+  }
+
+  function searchNow(key) {
+    if (!ready) {
+      return
+    }
+
     key = blog.trim(key)
-    key = key.replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/&/g, '&amp;')
+    var pattern = key
+      ? new RegExp(blog.encodeRegChar(key), 'gi')
+      : null
+    var doms = document.querySelectorAll('.list-search li')
+    var resultCount = 0
 
-    let doms = document.querySelectorAll('.list-search li')
-    let h1 = '<span class="hint">'
-    let h2 = '</span>'
-    for (let i = 0; i < doms.length; i++) {
-      let title = titles[i]
-      let content = contents[i]
-      let dom_li = doms[i]
-      let dom_title = dom_li.querySelector('.title')
-      let dom_content = dom_li.querySelector('.content')
+    for (var i = 0; i < doms.length; i++) {
+      var title = titles[i] || ''
+      var content = contents[i] || ''
+      var domItem = doms[i]
+      var domTitle = domItem.querySelector('.title')
+      var domContent = domItem.querySelector('.content')
+      var matchedTitle = pattern ? pattern.exec(title) : null
+      if (pattern) pattern.lastIndex = 0
+      var matchedContent = pattern ? pattern.exec(content) : null
+      if (pattern) pattern.lastIndex = 0
 
-      dom_title.innerHTML = title
-      dom_content.innerHTML = ''
+      if (pattern) {
+        domTitle.innerHTML = highlight(title, pattern)
+      } else {
+        domTitle.textContent = title
+      }
+      domContent.innerHTML = ''
 
-      // 空字符隐藏
-      if (key == '') {
-        dom_li.setAttribute('hidden', true)
+      if (!pattern) {
+        domItem.setAttribute('hidden', 'hidden')
         continue
       }
-      let hide = true
-      let r1 = new RegExp(blog.encodeRegChar(key), 'gi')
-      let r2 = new RegExp(blog.encodeRegChar(key), 'i')
 
-      // 转义替换字符串中的 $ ，避免被 String.replace 当作特殊模式解释
-      let highlightKey = key.replace(/\$/g, '$$$$')
-      let h1h2 = h1 + highlightKey + h2
+      if (!matchedTitle && !matchedContent) {
+        domItem.setAttribute('hidden', 'hidden')
+        continue
+      }
 
-      // 标题全局替换
-      if (r1.test(title)) {
-        hide = false
-        dom_title.innerHTML = title.replace(r1, h1h2)
+      resultCount++
+      domItem.removeAttribute('hidden')
+
+      if (matchedTitle) {
+        domTitle.innerHTML = highlight(title, pattern)
       }
-      // 内容先找到第一个，然后确定100个字符，再对这100个字符做全局替换
-      let cResult = r2.exec(content)
-      if (cResult) {
-        hide = false
-        let index = cResult.index
-        let leftShifting = 10
-        let left = index - leftShifting
-        let right = index + (100 - leftShifting)
-        if (left < 0) {
-          right = right - left
-        }
-        content = content.substring(left, right)
-        dom_content.innerHTML = content.replace(r1, h1h2) + '...'
-      }
-      // 内容未命中标题命中，内容直接展示前100个字符
-      if (!cResult && !hide && content) {
-        dom_content.innerHTML = content.substring(0, 100) + '...'
-      }
-      if (hide) {
-        dom_li.setAttribute('hidden', true)
+
+      if (matchedContent) {
+        var left = Math.max(matchedContent.index - 10, 0)
+        var right = Math.min(left + 100, content.length)
+        var snippet = content.slice(left, right)
+        var snippetPattern = new RegExp(blog.encodeRegChar(key), 'gi')
+        domContent.innerHTML = highlight(snippet, snippetPattern) + '...'
       } else {
-        dom_li.removeAttribute('hidden')
+        domContent.innerHTML = escapeHtml(content.slice(0, 100)) + '...'
       }
+    }
+
+    if (!pattern) {
+      setStatus('请输入关键词')
+    } else if (resultCount === 0) {
+      setStatus('没有找到相关文章')
+    } else {
+      setStatus('')
     }
   }
 
-  blog.addEvent(input, 'input', function (event) {
-    if (!inputLock) {
-      search(event.target.value)
+  function scheduleSearch() {
+    clearTimeout(searchTimer)
+    searchTimer = setTimeout(function () {
+      searchNow(input.value)
+    }, 150)
+  }
+
+  input.addEventListener('input', function () {
+    if (ready && !inputLock) {
+      scheduleSearch()
     }
   })
 
-  blog.addEvent(input, 'compositionstart', function (event) {
+  input.addEventListener('compositionstart', function () {
     inputLock = true
+    clearTimeout(searchTimer)
   })
 
-  blog.addEvent(input, 'compositionend', function (event) {
+  input.addEventListener('compositionend', function () {
     inputLock = false
-    search(event.target.value)
+    searchNow(input.value)
   })
 })

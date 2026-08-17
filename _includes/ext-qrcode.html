@@ -10,6 +10,7 @@
   actions.className += ' has-qrcode'
 
   var overlay = null
+  var loadingScript = false
 
   function closeQrcode() {
     if (!overlay) {
@@ -26,16 +27,23 @@
       return
     }
 
+    if (loadingScript) {
+      return
+    }
+
     openOverlay('<span class="qrcode-loading">二维码生成中...</span>', '')
 
+    loadingScript = true
     var script = document.createElement('script')
-    script.src = 'https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js'
+    script.src = blog.baseurl + '/static/js/vendor/qrcode-generator-1.4.4.min.js?t=' + blog.buildAt
     script.onload = function () {
+      loadingScript = false
       if (overlay) {
         renderQrcode()
       }
     }
     script.onerror = function () {
+      loadingScript = false
       if (overlay) {
         renderError()
       }

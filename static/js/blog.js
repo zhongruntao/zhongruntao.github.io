@@ -7,18 +7,14 @@
 })()
 
 /**
- * 工具，允许多次onload不被覆盖
+ * 工具，在 DOM 就绪后执行，脚本在页尾时会立即执行
  * @param {方法} func
  */
 blog.addLoadEvent = function (func) {
-  var oldonload = window.onload
-  if (typeof window.onload != 'function') {
-    window.onload = func
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', func)
   } else {
-    window.onload = function () {
-      oldonload()
-      func()
-    }
+    func()
   }
 }
 
@@ -30,15 +26,7 @@ blog.addLoadEvent = function (func) {
  * @param {是否捕获} useCapture
  */
 blog.addEvent = function (dom, eventName, func, useCapture) {
-  if (window.attachEvent) {
-    dom.attachEvent('on' + eventName, func)
-  } else if (window.addEventListener) {
-    if (useCapture != undefined && useCapture === true) {
-      dom.addEventListener(eventName, func, true)
-    } else {
-      dom.addEventListener(eventName, func, false)
-    }
-  }
+  dom.addEventListener(eventName, func, useCapture === true)
 }
 
 /**
@@ -47,11 +35,7 @@ blog.addEvent = function (dom, eventName, func, useCapture) {
  * @param {class名} className
  */
 blog.addClass = function (dom, className) {
-  if (!blog.hasClass(dom, className)) {
-    var c = dom.className || ''
-    dom.className = c + ' ' + className
-    dom.className = blog.trim(dom.className)
-  }
+  dom.classList.add(className)
 }
 
 /**
@@ -60,11 +44,7 @@ blog.addClass = function (dom, className) {
  * @param {class名} className
  */
 blog.hasClass = function (dom, className) {
-  var list = (dom.className || '').split(/\s+/)
-  for (var i = 0; i < list.length; i++) {
-    if (list[i] == className) return true
-  }
-  return false
+  return dom.classList.contains(className)
 }
 
 /**
@@ -73,14 +53,7 @@ blog.hasClass = function (dom, className) {
  * @param {class名} className
  */
 blog.removeClass = function (dom, className) {
-  if (blog.hasClass(dom, className)) {
-    var list = (dom.className || '').split(/\s+/)
-    var newName = ''
-    for (var i = 0; i < list.length; i++) {
-      if (list[i] != className) newName = newName + ' ' + list[i]
-    }
-    dom.className = blog.trim(newName)
-  }
+  dom.classList.remove(className)
 }
 
 /**
@@ -88,31 +61,7 @@ blog.removeClass = function (dom, className) {
  * @param {字符串} str
  */
 blog.trim = function (str) {
-  return str.replace(/^\s+|\s+$/g, '')
-}
-
-/**
- * 工具，转义html字符
- * @param {字符串} str
- */
-blog.htmlEscape = function (str) {
-  var temp = document.createElement('div')
-  temp.innerText = str
-  str = temp.innerHTML
-  temp = null
-  return str
-}
-
-/**
- * 工具，转换实体字符防止XSS
- * @param {字符串} str
- */
-blog.encodeHtml = function (html) {
-  var o = document.createElement('div')
-  o.innerText = html
-  var temp = o.innerHTML
-  o = null
-  return temp
+  return String.prototype.trim.call(str)
 }
 
 /**
@@ -120,62 +69,7 @@ blog.encodeHtml = function (html) {
  * @param {字符串} str
  */
 blog.encodeRegChar = function (str) {
-  // \ 必须在第一位
-  var arr = ['\\', '.', '^', '$', '*', '+', '?', '{', '}', '[', ']', '|', '(', ')']
-  arr.forEach(function (c) {
-    var r = new RegExp('\\' + c, 'g')
-    str = str.replace(r, '\\' + c)
-  })
-  return str
-}
-
-/**
- * 工具，Ajax
- * @param {字符串} str
- */
-blog.ajax = function (option, success, fail) {
-  var xmlHttp = null
-  if (window.XMLHttpRequest) {
-    xmlHttp = new XMLHttpRequest()
-  } else {
-    xmlHttp = new ActiveXObject('Microsoft.XMLHTTP')
-  }
-  var url = option.url
-  var method = (option.method || 'GET').toUpperCase()
-  var sync = option.sync === false ? false : true
-  var timeout = option.timeout || 10000
-
-  var timer
-  var isTimeout = false
-  xmlHttp.open(method, url, sync)
-  xmlHttp.onreadystatechange = function () {
-    if (isTimeout) {
-      fail({
-        error: '请求超时'
-      })
-    } else {
-      if (xmlHttp.readyState == 4) {
-        if (xmlHttp.status == 200) {
-          success(xmlHttp.responseText)
-        } else {
-          fail({
-            error: '状态错误',
-            code: xmlHttp.status
-          })
-        }
-        //清除未执行的定时函数
-        clearTimeout(timer)
-      }
-    }
-  }
-  timer = setTimeout(function () {
-    isTimeout = true
-    fail({
-      error: '请求超时'
-    })
-    xmlHttp.abort()
-  }, timeout)
-  xmlHttp.send()
+  return str.replace(/[\\.^$*+?{}[\]|()-]/g, '\\$&')
 }
 
 /**
@@ -203,16 +97,15 @@ blog.initClickEffect = function (textArr) {
     if (tagName == 'a') {
       return
     }
-    var text = textArr[parseInt(Math.random() * textArr.length)]
+    var text = textArr[Math.floor(Math.random() * textArr.length)]
     var dom = createDOM(text)
 
     document.body.appendChild(dom)
     var w = parseInt(window.getComputedStyle(dom, null).getPropertyValue('width'))
     var h = parseInt(window.getComputedStyle(dom, null).getPropertyValue('height'))
 
-    var sh = window.pageYOffset || document.documentElement.scrollTop || document.body.scrollTop || 0
-    dom.style.left = ev.pageX - w / 2 + 'px'
-    dom.style.top = ev.pageY - sh - h + 'px'
+    dom.style.left = ev.clientX - w / 2 + 'px'
+    dom.style.top = ev.clientY - h + 'px'
     dom.style.opacity = 1
 
     setTimeout(function () {
@@ -236,7 +129,7 @@ blog.addLoadEvent(function () {
   if (document.getElementsByClassName('page-post').length == 0) {
     return
   }
-  var tables = document.getElementsByTagName('table')
+  var tables = document.querySelectorAll('table')
   for (var i = 0; i < tables.length; i++) {
     var table = tables[i]
     var elem = document.createElement('div')
@@ -291,7 +184,7 @@ blog.initCodeCopy = function () {
       event.stopPropagation()
       var currentButton = event.currentTarget
       var currentCode = currentButton.parentNode.querySelector('code')
-    copyText(currentCode.textContent.replace(/^[\r\n]+/, '').replace(/\s+$/, ''), currentButton)
+      copyText(currentCode.textContent.replace(/^[\r\n]+/, '').replace(/\s+$/, ''), currentButton)
     })
 
     container.appendChild(button)
@@ -305,7 +198,8 @@ blog.initCodeCopy = function () {
       button.title = success ? '已复制' : '复制失败，请手动选择代码'
       button.setAttribute('aria-label', button.title)
 
-      setTimeout(function () {
+      clearTimeout(button.resetTimer)
+      button.resetTimer = setTimeout(function () {
         button.className = 'code-copy-button'
         label.innerText = '复制'
         button.title = '复制代码'
@@ -350,22 +244,28 @@ blog.initCodeCopy = function () {
 // 回到顶部
 blog.addLoadEvent(function () {
   var toTopDOM = document.getElementById('to-top')
+  if (!toTopDOM) {
+    return
+  }
 
   function getScrollTop() {
-    if (document.documentElement && document.documentElement.scrollTop) {
-      return document.documentElement.scrollTop
-    } else if (document.body) {
-      return document.body.scrollTop
+    return window.scrollY || document.documentElement.scrollTop || 0
+  }
+
+  var updating = false
+  function updateToTop() {
+    updating = false
+    toTopDOM.classList.toggle('show', getScrollTop() > 200)
+  }
+
+  function scheduleUpdateToTop() {
+    if (!updating) {
+      updating = true
+      window.requestAnimationFrame(updateToTop)
     }
   }
-  function ckeckToShow() {
-    if (getScrollTop() > 200) {
-      blog.addClass(toTopDOM, 'show')
-    } else {
-      blog.removeClass(toTopDOM, 'show')
-    }
-  }
-  blog.addEvent(window, 'scroll', ckeckToShow)
+
+  window.addEventListener('scroll', scheduleUpdateToTop, { passive: true })
   blog.addEvent(
     toTopDOM,
     'click',
@@ -386,7 +286,7 @@ blog.addLoadEvent(function () {
     },
     true
   )
-  ckeckToShow()
+  updateToTop()
 })
 
 // 点击图片全屏预览
@@ -396,6 +296,7 @@ blog.addLoadEvent(function () {
   }
   //console.debug('init post img click event')
   let imgMoveOrigin = null
+  let imgMoveOriginRect = null
   let restoreLock = false
   let imgArr = document.querySelectorAll('.page-post img')
 
@@ -420,17 +321,13 @@ blog.addLoadEvent(function () {
     '}'
   ].join('')
   var styleDOM = document.createElement('style')
-  if (styleDOM.styleSheet) {
-    styleDOM.styleSheet.cssText = css
-  } else {
-    styleDOM.appendChild(document.createTextNode(css))
-  }
-  document.querySelector('head').appendChild(styleDOM)
+  styleDOM.appendChild(document.createTextNode(css))
+  document.head.appendChild(styleDOM)
 
-  window.addEventListener('resize', toCenter)
+  window.addEventListener('resize', toCenter, { passive: true })
 
   for (let i = 0; i < imgArr.length; i++) {
-    imgArr[i].addEventListener('click', imgClickEvent, true)
+    imgArr[i].addEventListener('click', imgClickEvent)
   }
 
   function prevent(ev) {
@@ -441,10 +338,14 @@ blog.addLoadEvent(function () {
     if (!imgMoveOrigin) {
       return
     }
-    let width = Math.min(imgMoveOrigin.naturalWidth, parseInt(document.documentElement.clientWidth * 0.9))
+    if (!imgMoveOrigin.naturalWidth || !imgMoveOrigin.naturalHeight) {
+      return
+    }
+
+    let width = Math.min(imgMoveOrigin.naturalWidth, document.documentElement.clientWidth * 0.9)
     let height = (width * imgMoveOrigin.naturalHeight) / imgMoveOrigin.naturalWidth
     if (window.innerHeight * 0.95 < height) {
-      height = Math.min(imgMoveOrigin.naturalHeight, parseInt(window.innerHeight * 0.95))
+      height = Math.min(imgMoveOrigin.naturalHeight, window.innerHeight * 0.95)
       width = (height * imgMoveOrigin.naturalWidth) / imgMoveOrigin.naturalHeight
     }
 
@@ -462,13 +363,18 @@ blog.addLoadEvent(function () {
     restoreLock = true
     let div = document.querySelector('.img-move-bg')
     let img = document.querySelector('.img-move-item')
+    if (!div || !img) {
+      restoreLock = false
+      imgMoveOrigin = null
+      return
+    }
 
     div.style.opacity = 0
     img.style.opacity = 0
-    img.style.left = imgMoveOrigin.x + 'px'
-    img.style.top = imgMoveOrigin.y + 'px'
-    img.style.width = imgMoveOrigin.width + 'px'
-    img.style.height = imgMoveOrigin.height + 'px'
+    img.style.left = imgMoveOriginRect.left + 'px'
+    img.style.top = imgMoveOriginRect.top + 'px'
+    img.style.width = imgMoveOriginRect.width + 'px'
+    img.style.height = imgMoveOriginRect.height + 'px'
 
     setTimeout(function () {
       restoreLock = false
@@ -479,27 +385,35 @@ blog.addLoadEvent(function () {
   }
 
   function imgClickEvent(event) {
-    imgMoveOrigin = event.target
+    event.preventDefault()
+    let source = event.currentTarget
+    if (imgMoveOrigin || !source.complete || !source.naturalWidth) {
+      return
+    }
+
+    imgMoveOrigin = source
+    let originRect = source.getBoundingClientRect()
+    imgMoveOriginRect = originRect
 
     let div = document.createElement('div')
     div.className = 'img-move-bg'
 
     let img = document.createElement('img')
     img.className = 'img-move-item'
-    img.src = imgMoveOrigin.src
-    img.style.left = imgMoveOrigin.x + 'px'
-    img.style.top = imgMoveOrigin.y + 'px'
-    img.style.width = imgMoveOrigin.width + 'px'
-    img.style.height = imgMoveOrigin.height + 'px'
+    img.src = imgMoveOrigin.currentSrc || imgMoveOrigin.src
+    img.style.left = originRect.left + 'px'
+    img.style.top = originRect.top + 'px'
+    img.style.width = originRect.width + 'px'
+    img.style.height = originRect.height + 'px'
 
-    div.onclick = restore
-    div.onmousewheel = restore
-    div.ontouchmove = prevent
+    div.addEventListener('click', restore)
+    div.addEventListener('wheel', restore, { passive: true })
+    div.addEventListener('touchmove', prevent, { passive: false })
 
-    img.onclick = restore
-    img.onmousewheel = restore
-    img.ontouchmove = prevent
-    img.ondragstart = prevent
+    img.addEventListener('click', restore)
+    img.addEventListener('wheel', restore, { passive: true })
+    img.addEventListener('touchmove', prevent, { passive: false })
+    img.addEventListener('dragstart', prevent)
 
     document.body.appendChild(div)
     document.body.appendChild(img)
@@ -516,10 +430,16 @@ blog.addLoadEvent(function () {
 blog.addLoadEvent(function () {
   var $logo = document.querySelector('.header .logo')
   var $themeToggle = document.getElementById('theme-toggle')
+
   function toggleTheme() {
     blog.setDarkTheme(!blog.darkTheme)
-    localStorage.darkTheme = blog.darkTheme
+    blog.setStoredTheme(blog.darkTheme)
   }
+
+  if (!$logo) {
+    return
+  }
+
   blog.addEvent($logo, 'click', toggleTheme)
   if ($themeToggle) {
     blog.addEvent($themeToggle, 'click', function (event) {
@@ -534,10 +454,10 @@ blog.addLoadEvent(function () {
   if (!document.querySelector('.page-post')) {
     return
   }
-  const list = document.querySelectorAll('.post h1, .post h2, .post h3, .post h4')
+  const list = document.querySelectorAll('.post h1, .post h2, .post h3, .post h4, .post h5')
   for (var i = 0; i < list.length; i++) {
     blog.addEvent(list[i], 'click', function (event) {
-      const el = event.target
+      const el = event.currentTarget
       if (el.scrollIntoView) {
         el.scrollIntoView({ block: 'start' })
       }
@@ -597,7 +517,7 @@ blog.initPostToc = function () {
       event.preventDefault()
       setActive(link)
       closeToc()
-      window.scrollTo(0, window.pageYOffset + heading.getBoundingClientRect().top - 16)
+      window.scrollTo(0, window.scrollY + heading.getBoundingClientRect().top - 16)
       if (history.replaceState) {
         history.replaceState({}, '', '#' + encodeURIComponent(heading.id))
       }
@@ -611,12 +531,8 @@ blog.initPostToc = function () {
   aside.appendChild(list)
   tocToggle.onclick = function (event) {
     event.stopPropagation()
-    var opened = aside.className.indexOf('open') === -1
-    if (opened) {
-      blog.addClass(aside, 'open')
-    } else {
-      blog.removeClass(aside, 'open')
-    }
+    var opened = !aside.classList.contains('open')
+    aside.classList.toggle('open', opened)
     tocToggle.setAttribute('aria-expanded', opened ? 'true' : 'false')
   }
 
@@ -650,7 +566,7 @@ blog.initPostToc = function () {
     ticking = false
 
     var scrolledToBottom =
-      window.innerHeight + window.pageYOffset >=
+      window.innerHeight + window.scrollY >=
       document.documentElement.scrollHeight - 4
 
     if (scrolledToBottom) {
@@ -674,12 +590,12 @@ blog.initPostToc = function () {
     }
   }
 
-  blog.addEvent(window, 'scroll', function () {
+  window.addEventListener('scroll', function () {
     if (!ticking) {
       ticking = true
       window.requestAnimationFrame(updateActiveHeading)
     }
-  })
+  }, { passive: true })
 
   updateActiveHeading()
 }
