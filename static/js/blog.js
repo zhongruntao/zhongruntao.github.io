@@ -248,7 +248,6 @@ blog.addLoadEvent(function () {
 
 // 回到顶部
 blog.addLoadEvent(function () {
-  var actionsDOM = document.getElementById('footer-actions')
   var toTopDOM = document.getElementById('to-top')
 
   function getScrollTop() {
@@ -260,9 +259,9 @@ blog.addLoadEvent(function () {
   }
   function ckeckToShow() {
     if (getScrollTop() > 200) {
-      blog.addClass(actionsDOM, 'show')
+      blog.addClass(toTopDOM, 'show')
     } else {
-      blog.removeClass(actionsDOM, 'show')
+      blog.removeClass(toTopDOM, 'show')
     }
   }
   blog.addEvent(window, 'scroll', ckeckToShow)

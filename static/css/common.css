@@ -161,11 +161,6 @@ input:-webkit-autofill {
   bottom: 12px;
   display: flex;
   gap: 8px;
-  transform: translateY(66px);
-  transition: transform 200ms ease-in-out;
-}
-#footer-actions.show {
-  transform: translateY(0);
 }
 #footer-actions button,
 #footer-actions #to-top {
@@ -196,6 +191,11 @@ input:-webkit-autofill {
 }
 #to-top {
   position: relative;
+  transform: translateY(66px);
+  transition: transform 200ms ease-in-out;
+}
+#to-top.show {
+  transform: translateY(0);
 }
 #to-top > span {
   display: block;
