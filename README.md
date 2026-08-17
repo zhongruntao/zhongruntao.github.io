@@ -1,264 +1,282 @@
-# 我的博客
+# 知行合一
 
-基于 [Jekyll](https://jekyllrb.com/) 的极简个人博客，纯静态站点，支持明暗主题切换、站内搜索、分类归档等功能。
+基于 Jekyll 3.8.5 的个人技术博客。站点为纯静态输出，适配手机、平板和桌面浏览器，当前支持 GitHub Pages Actions 自动部署，也保留了腾讯云 COS 手动部署脚本。
 
-## 特性
+## 功能特性
 
-- 明暗主题切换，点击页头头像或右下角主题按钮即可切换，跟随系统设置
-- 客户端站内搜索，无需后端支持
-- 分类归档，按年份分组展示文章
-- 桌面端文章目录，自动生成并高亮当前小节
-- 代码高亮（Rouge 引擎，深浅双套主题）
-- 图片全屏预览，点击文章内图片居中放大
-- 文章二维码，手机扫码快速阅读当前文章
+- 明暗主题切换，可点击页头头像，也可使用右下角主题按钮
+- 客户端站内搜索，无需后端服务
+- 分类归档页，按年份和分类整理文章
+- 文章目录：桌面端固定在右侧，非桌面端从右下角按钮展开
+- Rouge 代码高亮，提供明暗两套配色
+- 文章代码块一键复制
+- 图片点击全屏预览
+- 文章二维码，手机扫码打开当前文章
 - MathJax 数学公式渲染
 - Mermaid 图表渲染
-- PWA 离线缓存支持
-
-## 技术栈
-
-| 类别     | 说明                            |
- |----------|---------------------------------|
-| 站点生成 | Jekyll 3.8.5                    |
-| 代码高亮 | Rouge 3.11.0                    |
-| 前端     | 原生 HTML / CSS / JS            |
-| 搜索     | 原生 JS + 预生成 XML 索引       |
-| 部署     | GitHub Pages 或腾讯云 COS + CDN |
+- PWA 离线缓存
+- 文章 URL 基于源文件 MD5 自动生成
 
 ## 目录结构
 
- ```
- ├── _config.yml        # 站点配置（信息、菜单、友情链接等）
- ├── _layouts/          # 布局模板（page / mypost）
- ├── _includes/         # 可复用组件（head、header、footer 等）
- ├── _posts/            # 博客文章（Markdown）
- ├── pages/             # 独立页面（关于、分类、搜索、书签）
- ├── posts/             # 文章静态资源（按 年/月/日 组织）
- ├── static/            # 静态资源（CSS、JS、字体、图片、XML）
- ├── index.html         # 首页
- ├── blog.sh            # 构建与部署脚本
- ├── service-worker.js  # PWA 离线缓存
- └── favicon.ico        # 站点图标（多尺寸）
- ```
+```text
+├── .github/workflows/  # GitHub Pages 构建工作流
+├── _config.yml         # 站点配置、菜单、功能开关、书签
+├── _includes/          # head、header、footer 和扩展功能组件
+├── _layouts/           # page / mypost 页面布局
+├── _plugins/           # Jekyll 插件，当前负责 MD5 链接和资源路径改写
+├── _posts/             # 文章 Markdown 源文件
+├── pages/              # 关于、分类、搜索、书签等独立页面
+├── posts/              # 文章资源，按 年/月/日 目录存放
+├── static/             # CSS、JS、字体、图标和 XML 索引
+├── 404.md              # 404 页面
+├── CNAME               # 自定义域名
+├── Gemfile             # Ruby 依赖
+├── blog.sh             # 本地预览、构建和 COS 部署脚本
+├── index.html          # 首页
+└── service-worker.js   # PWA Service Worker
+```
 
-## 快速开始
+## 本地开发
 
-### 环境要求
+环境要求：
 
-- Ruby 2.5+
-- Bundler（`gem install bundler`）
+- Ruby 2.7+
+- Bundler
 
-### 本地运行
+安装依赖并启动本地服务：
 
- ```bash
- # 安装依赖
- bundle install
+```bash
+bundle install
+./blog.sh run
+```
 
- # 启动本地预览（默认端口 8080）
- ./blog.sh run
+默认访问 `http://localhost:8080`。指定端口运行：
 
- # 或指定端口
- ./blog.sh run 4000
- ```
+```bash
+./blog.sh run 4000
+```
 
-启动后访问 `http://localhost:8080` 即可预览网站。
+Windows 用户建议在 Git Bash、WSL 或其他 Bash 兼容环境中执行 `blog.sh`。
 
-## 修改网站信息
+## 站点配置
 
-所有站点配置集中在 [_config.yml](_config.yml) 文件中。
+常用信息集中在 `_config.yml`：
 
-### 基础信息
+```yaml
+title: 知行合一
+description: 知行合一
+keywords: runtao.zhong,Blog,Java,Html,JavaScript,Jekyll
+author: runtao.zhong
+footerText: '联系我（email）: <a href="mailto:runtao.zhong@email.cn">runtao.zhong@email.cn</a>'
+```
 
- ```yaml
- title: 我的博客                    # 站点标题，显示在浏览器标签页和页头
- description: 我的博客              # 站点描述，用于 SEO meta 标签
- keywords: runtao.zhong,Blog,Jekyll   # 关键词，逗号分隔，用于 SEO
-   author: runtao.zhong               # 作者名称，显示在文章页和 meta 标签
-   footerText: '联系我（email）: ...'  # 页脚文字，支持 HTML（如 mailto 链接）
- ```
-
-`footerText` 支持写入 HTML 标签，例如点击发邮件：
-
- ```yaml
- footerText: '联系我: <a href="mailto:you@email.com">you@email.com</a>'
- ```
+`footerText` 支持 HTML，可用于 `mailto:` 链接。
 
 ### 导航菜单
 
-在 `_config.yml` 的 `menu` 字段配置，每项包含：
+```yaml
+menu:
+  - title: 首页
+    url: /
+  - title: 归类
+    url: /pages/categories.html
+  - title: GitHub
+    url: https://github.com
+    target: _blank
+```
 
- ```yaml
- menu:
-   - title: 首页          # 菜单显示文字（必填）
-     url: /               # 链接地址（必填）
-   - title: GitHub        # 外部链接示例
-     url: https://github.com
-     target: _blank       # 可选，新标签页打开
- ```
+内部链接会自动拼接 `baseurl`；外部链接建议显式配置 `target`。
 
-### 友情链接
+### 书签页
 
-书签页（`pages/links.html`）的内容来自 `_config.yml` 的 `links` 字段：
+`pages/links.html` 渲染 `_config.yml` 中的 `links`：
 
- ```yaml
- links:
-   - title: GitHub        # 链接文字
-     url: https://github.com  # 链接地址
- ```
+```yaml
+links:
+  - title: GitHub
+    url: https://github.com
+```
 
 ### 关于页面
 
-编辑 [pages/about.md](pages/about.md)，使用 Markdown 格式书写个人介绍、联系方式等内容。
+编辑 [pages/about.md](pages/about.md)。该页面正文从三级标题开始书写。
 
-## 修改头像与图标
+## 头像与图标
 
-网站涉及三处图片，全部放在 `static/img/` 目录下，替换文件即可，建议比例 1:1：
+| 文件                     | 用途                     | 引用位置                                       |
+|--------------------------|--------------------------|------------------------------------------------|
+| `static/img/logo.jpg`    | 页头头像、Apple 触摸图标 | `_includes/header.html`、`_includes/head.html` |
+| `static/img/favicon.ico` | 浏览器标签页图标         | `_includes/head.html`                          |
 
-| 文件                     | 用途                               | 引用位置                |
- |--------------------------|------------------------------------|-------------------------|
-| `static/img/logo.jpg`    | 页头头像（点击可切换明暗主题）     | `_includes/header.html` |
-| `static/img/favicon.ico` | 浏览器标签页图标                   | `_includes/head.html`   |
-| `static/img/logo.jpg`    | Apple 触摸图标（iOS 添加到主屏幕） | `_includes/head.html`   |
+替换文件即可更新图标。根目录下的 `favicon.ico` 当前未被站点引用。
 
-根目录下的 `favicon.ico` 不被网站直接引用，如需更新标签页图标，请替换 `static/img/favicon.ico`。
+生成多尺寸 favicon 的 Python 示例：
 
-favicon 建议使用多尺寸 ICO（16/32/48/64/128/256），可用 Pillow 从高清原图生成：
+```python
+from PIL import Image
 
- ```python
- from PIL import Image
- src = Image.open('logo.jpg').convert('RGBA')
- sizes = [(256,256),(128,128),(64,64),(48,48),(32,32),(16,16)]
- frames = [src.resize(s, Image.LANCZOS) for s in sizes]
- frames[0].save('static/img/favicon.ico', format='ICO')
- ```
-
-## SEO 配置
-
-SEO 相关信息在 `_config.yml` 顶部统一配置，会自动注入到所有页面的 `<head>` 中：
-
- ```yaml
- title: 我的博客          # <title> 标签
- description: 我的博客    # <meta name="description">
- keywords: a,b,c         # <meta name="keywords">
- author: runtao.zhong    # <meta name="author">
- ```
-
-文章页会自动使用文章标题作为 `description`，文章分类追加到 `keywords`，无需手动设置。
-
-站点还会自动生成以下 SEO 文件，位于 `static/xml/` 目录：
-
-| 文件          | 用途                                   |
- |---------------|----------------------------------------|
-| `sitemap.xml` | 站点地图，提交给搜索引擎               |
-| `rss.xml`     | RSS 订阅源                             |
-| `search.xml`  | 站内搜索索引（自动生成，不要手动编辑） |
+src = Image.open("static/img/logo.jpg").convert("RGBA")
+sizes = [(256, 256), (128, 128), (64, 64), (48, 48), (32, 32), (16, 16)]
+frames = [src.resize(size, Image.LANCZOS) for size in sizes]
+frames[0].save("static/img/favicon.ico", format="ICO")
+```
 
 ## 写文章
 
-### 创建文章
+文章放在 `_posts`，命名格式：
 
-文章放在 `_posts` 目录下，文件命名格式为 `yyyy-MM-dd-标题.md`，例如：
-
- ```
- _posts/2026-08-13-my-first-post.md
- ```
-
-### Front Matter
-
-每篇文章开头需要 Front Matter 声明元信息：
-
- ````markdown
- ---
-layout: mypost title: 文章标题 categories: [分类1, 分类2]
-author: jiancai.zhong # 可选，不写则使用全局 author date: 2026-08-13
- ---
-
-正文从这里开始，使用 Markdown 格式书写。
- ````
-
-字段说明：
-
-| 字段         | 必填 | 说明                                                         |
- |--------------|------|--------------------------------------------------------------|
-| `layout`     | 是   | 固定为 `mypost`                                              |
-| `title`      | 是   | 文章标题，显示在页面和列表中                                 |
-| `categories` | 否   | 分类列表，多个用逗号分隔，会自动归入分类页                   |
-| author       | 否   | 文章作者，不写则使用全局 site.author（与全局相同则无需填写） |
-| date         | 否   | 发布日期，默认取文件名中的日期                               |
-
-### Markdown 语法
-
-参考示例文章 [_posts/2026-08-13-md的使用.md](_posts/2026-08-13-md的使用.md)，涵盖了标题、加粗、列表、代码块、表格、引用、图片等全部常用语法。
-
-## 静态资源
-
-### 文章图片
-
-文章引用的图片等资源放在 `posts` 目录下，按日期归档。规则是将文章文件名中的日期转为目录路径：
-
-| 文章文件名              | 资源目录            |
- |-------------------------|---------------------|
-| `2026-08-13-my-post.md` | `posts/2026/08/13/` |
-| `2026-08-13-hello.md`   | `posts/2026/08/13/` |
-
-在文章中通过相对路径引用：
-
-```markdown
-![图片说明](yun.png)
+```text
+yyyy-MM-dd-文章名.md
 ```
 
-构建时会自动把这些相对资源改写为 `/posts/年/月/日/文件名`，即使文章页面使用 MD5 链接，资源仍然按原目录访问。
+示例：
 
-文章页的图片支持点击全屏预览。
+```text
+_posts/2026-08-17-my-post.md
+```
 
-### 全局静态资源
+Front Matter 示例：
 
-站点级资源放在 `static/` 目录下：
+```yaml
+---
+layout: mypost
+title: 文章标题
+categories: [ 分类1, 分类2 ]
+author: jiancai.zhong
+date: 2026-08-17
+---
+```
 
-| 目录           | 内容                    |
- |----------------|-------------------------|
-| `static/css/`  | 样式文件                |
-| `static/js/`   | JavaScript 脚本         |
-| `static/img/`  | 站点头像、favicon、图标 |
-| `static/font/` | 字体文件                |
-| `static/xml/`  | sitemap、rss、搜索索引  |
+| 字段         | 必填 | 说明                         |
+|--------------|------|------------------------------|
+| `layout`     | 是   | 固定为 `mypost`              |
+| `title`      | 是   | 文章标题，显示在列表和文章页 |
+| `categories` | 否   | 分类数组，自动进入归类页     |
+| `author`     | 否   | 默认使用 `site.author`       |
+| `date`       | 否   | 默认取文件名日期             |
+
+Markdown 语法示例可参考 [_posts/2025-01-01-md的使用.md](_posts/2025-01-01-md的使用.md)。
+
+### 代码块
+
+使用围栏代码块并显式声明语言，例如：
+
+````markdown
+```java
+public class Demo {
+}
+```
+````
+
+Rouge 会按语言高亮，文章页会自动显示复制按钮。Mermaid 图使用 `mermaid` 语言标识，构建后渲染为图表，不显示复制按钮。
+
+## 文章资源
+
+文章引用的图片、压缩包等资源放在 `posts/年/月/日/` 目录：
+
+| 文章文件名              | 资源目录            |
+|-------------------------|---------------------|
+| `2026-08-17-my-post.md` | `posts/2026/08/17/` |
+| `2026-08-18-hello.md`   | `posts/2026/08/18/` |
+
+文章中使用相对路径引用：
+
+```markdown
+![图片说明](yun.webp)
+```
+
+构建时插件会把相对资源链接改写为：
+
+```text
+/posts/年/月/日/文件名
+```
+
+因此文章页面使用 MD5 URL 时，资源仍然按原日期目录访问，不会变成 `/<md5>/yun.webp`。
+
+当前支持改写的常见静态资源后缀包括：`webp`、`png`、`jpg`、`jpeg`、`gif`、`svg`、`bmp`、`ico`、`pdf`、`zip`、`rar`、`7z`、`txt`。
+
+### SEO 文件
+
+构建输出包含：
+
+| 文件                     | 用途             |
+|--------------------------|------------------|
+| `static/xml/sitemap.xml` | 站点地图         |
+| `static/xml/rss.xml`     | RSS 订阅         |
+| `static/xml/search.xml`  | 站内搜索内容索引 |
+
+这些文件由 Jekyll 模板生成，通常不需要手工编辑。
+
+## 文章 MD5 链接
+
+`_plugins/md5_permalink.rb` 会在构建时为文章生成：
+
+```text
+/<md5>/
+```
+
+规则：
+
+- MD5 的输入是文章 Markdown 源文件内容
+- 计算前会把 CRLF 统一为 LF，Windows 和 Linux 构建结果一致
+- 源文件任何内容变化都会改变文章 URL，包括改标题、改错别字、改 Front Matter 或改空白字符
+- 不修改源 Markdown 中的相对资源路径，因此资源改写不会反向影响文章 MD5
+- 首页、RSS、sitemap 和文章二维码都会使用当前构建出的 URL
+
+`_config.yml` 中的 `permalink: /posts/:year/:month/:day/:title` 仅作为未走插件的兜底配置；正常构建文章时会被 MD5
+permalink 覆盖。
 
 ## 可选功能开关
 
-在 `_config.yml` 中控制开关：
+在 `_config.yml` 中控制：
 
 ```yaml
-extClickEffect: false   # 点击页面文字冒出特效
-extMath: true           # MathJax 数学公式渲染（影响加载速度）
-extMermaid: true        # Mermaid 图表渲染
+extClickEffect: false   # 点击文字冒出特效
+extMath: true           # MathJax 数学公式
+extMermaid: true        # Mermaid 图表
 extQrCode: true         # 文章二维码
-extThemeToggle: true    # 页面右下角主题切换按钮（关闭后仍可点击头像切换）
-extServiceWorker: true  # PWA 离线缓存，Service Worker 预缓存站点资源
+extThemeToggle: true    # 右下角主题按钮；关闭后仍可点击头像切换
+extServiceWorker: true  # PWA 离线缓存
 ```
 
-## 文章链接
-
-文章 URL 在构建时根据源 Markdown 文件的 MD5 自动生成，格式为 `/<md5>/`，链接中不包含 `.md` 或 `.html`。MD5 统一按 LF 换行计算，Windows 本地预览和 Linux 构建结果一致。源文件内容发生变化后，文章 URL 会随之变化；首页、RSS、sitemap 和文章二维码会自动使用新的 URL。
-
-## 域名配置
-
-| 方式        | 操作                                                        |
- |-------------|-------------------------------------------------------------|
-| 自定义域名  | 创建 `CNAME` 文件写入域名，CNAME 解析到 `用户名.github.com` |
-| GitHub 域名 | 删除 `CNAME` 文件，项目命名为 `用户名.github.io`            |
+文章目录和代码复制按钮当前为默认功能，未单独设置开关。
 
 ## 部署
 
-GitHub Pages 必须将 `Settings -> Pages -> Build and deployment -> Source` 设置为 `GitHub Actions`。仓库提供的 `.github/workflows/pages.yml` 会使用 Jekyll 3.8.5 构建站点，并加载 `_plugins/md5_permalink.rb` 生成 MD5 文章链接。
+### GitHub Pages
 
-推送 `main` 分支后 Actions 会自动部署，也可以在 `Actions -> Build and deploy Pages -> Run workflow` 手动触发。
+仓库提供 [.github/workflows/pages.yml](.github/workflows/pages.yml)，使用 Ruby 2.7、Bundler 和 Jekyll 3.8.5 构建站点。
+
+GitHub 仓库需要设置：
+
+```text
+Settings -> Pages -> Build and deployment -> Source -> GitHub Actions
+```
+
+推送 `main` 分支后自动部署，也可以在：
+
+```text
+Actions -> Build and deploy Pages -> Run workflow
+```
+
+手动触发。
+
+### 腾讯云 COS
+
+本机需要安装并配置 `cos-upload`，且可访问 `curl`：
 
 ```bash
 # 构建到 dist 目录
 ./blog.sh build
 
- # 部署到腾讯云 COS 并刷新 CDN
- ./blog.sh deploy
- ```
+# 构建、上传到 COS 并刷新 CDN
+./blog.sh deploy
+```
 
-以上本地命令不适用于 GitHub Pages 自动部署。
+这套脚本适用于 COS 手动部署，不参与 GitHub Pages 自动部署。
+
+### 域名
+
+- 自定义域名保留 `CNAME`
+- GitHub 默认域名需删除 `CNAME`，并将仓库命名为 `<用户名>.github.io`

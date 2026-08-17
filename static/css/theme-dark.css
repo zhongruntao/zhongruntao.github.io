@@ -70,8 +70,32 @@ html.dark .page-post table tr:nth-child(even) {
 html.dark .page-post iframe {
   opacity: 0.8;
 }
+html.dark .page-post .code-copy-button {
+  border-color: rgba(255, 255, 255, 0.16);
+  background-color: rgba(35, 39, 45, 0.92);
+  color: #d0d7de;
+}
+html.dark .page-post .code-copy-button:hover,
+html.dark .page-post .code-copy-button:focus-visible {
+  background-color: rgba(51, 56, 63, 0.96);
+}
+html.dark .page-post .code-copy-button.copied {
+  color: #56d364;
+  border-color: rgba(86, 211, 100, 0.38);
+}
+html.dark .page-post .code-copy-button.failed {
+  color: #f85149;
+  border-color: rgba(248, 81, 73, 0.38);
+}
 html.dark .post-toc {
   border-left: 2px solid #30363d;
+}
+@media screen and (max-width: 1199px) {
+  html.dark .post-toc {
+    border-left: 0;
+    background-color: #161b22;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.55);
+  }
 }
 html.dark .post-toc-list a {
   color: #8b949e;

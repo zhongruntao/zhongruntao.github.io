@@ -128,6 +128,54 @@
   border-radius: unset;
   color: inherit;
 }
+.page-post .highlight,
+.page-post .code-block {
+  position: relative;
+}
+.page-post .code-copy-button {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  appearance: none;
+  box-sizing: border-box;
+  width: 72px;
+  height: 24px;
+  padding: 0;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.86);
+  color: #333333;
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity 200ms ease, background-color 200ms ease, color 200ms ease;
+}
+.page-post .code-copy-button:hover,
+.page-post .code-copy-button:focus-visible {
+  opacity: 1;
+}
+.page-post .code-copy-button.copied {
+  color: #106c2a;
+  border-color: rgba(16, 108, 42, 0.3);
+  opacity: 1;
+}
+.page-post .code-copy-button.failed {
+  color: #c62828;
+  border-color: rgba(198, 40, 40, 0.3);
+  opacity: 1;
+}
+.page-post .code-copy-button svg {
+  width: 13px;
+  height: 13px;
+  flex-shrink: 0;
+}
 .page-post hr {
   border: none;
   height: 3px;
@@ -245,6 +293,52 @@
 .post-toc {
   display: none;
 }
+@media screen and (max-width: 1199px) {
+  .post-toc {
+    position: fixed;
+    right: 16px;
+    bottom: 64px;
+    left: 16px;
+    z-index: 150;
+    display: none;
+    box-sizing: border-box;
+    max-height: min(60vh, calc(100vh - 120px));
+    overflow: auto;
+    padding: 10px 14px 12px;
+    background-color: #ffffff;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.18);
+  }
+  .post-toc.open {
+    display: block;
+  }
+  .post-toc-list {
+    margin: 0;
+  }
+  .post-toc-list li {
+    list-style: none;
+  }
+  .post-toc-list a {
+    display: block;
+    padding: 6px 0;
+    color: #666666;
+    font-size: 14px;
+    line-height: 1.6;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .post-toc-list a:hover,
+  .post-toc-list a.active {
+    color: #000000;
+    font-weight: bold;
+  }
+  .post-toc-list .toc-level-h4 {
+    padding-left: 28px;
+  }
+  .post-toc-list .toc-level-h5 {
+    padding-left: 56px;
+  }
+}
 @media screen and (min-width: 1200px) {
   .post-toc {
     display: block;
@@ -270,7 +364,9 @@
     color: #666666;
     font-size: 13px;
     line-height: 1.55;
-    word-break: break-word;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
   .post-toc-list a:hover,
   .post-toc-list a.active {

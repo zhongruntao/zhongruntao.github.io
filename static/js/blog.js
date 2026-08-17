@@ -246,6 +246,107 @@ blog.addLoadEvent(function () {
   }
 })
 
+// 文章代码块复制
+blog.initCodeCopy = function () {
+  var page = document.querySelector('.page-post')
+  if (!page) {
+    return
+  }
+
+  var pres = page.querySelectorAll('pre')
+  for (var i = 0; i < pres.length; i++) {
+    var pre = pres[i]
+    var code = pre.querySelector('code')
+    if (!code || (code.className || '').indexOf('language-mermaid') !== -1) {
+      continue
+    }
+
+    var container = pre.parentNode
+    if (
+      !container.classList ||
+      (!container.classList.contains('highlight') && !container.classList.contains('code-block'))
+    ) {
+      container = document.createElement('div')
+      container.className = 'code-block'
+      pre.parentNode.insertBefore(container, pre)
+      container.appendChild(pre)
+    }
+
+    if (container.querySelector('.code-copy-button')) {
+      continue
+    }
+
+    var button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'code-copy-button'
+    button.title = '复制代码'
+    button.setAttribute('aria-label', '复制代码')
+    button.innerHTML =
+      '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+      '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>' +
+      '<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>' +
+      '</svg><span>复制</span>'
+
+    blog.addEvent(button, 'click', function (event) {
+      event.stopPropagation()
+      var currentButton = event.currentTarget
+      var currentCode = currentButton.parentNode.querySelector('code')
+    copyText(currentCode.textContent.replace(/^[\r\n]+/, '').replace(/\s+$/, ''), currentButton)
+    })
+
+    container.appendChild(button)
+  }
+
+  function copyText(text, button) {
+    function done(success) {
+      var label = button.querySelector('span')
+      button.className = success ? 'code-copy-button copied' : 'code-copy-button failed'
+      label.innerText = success ? '已复制' : '复制失败'
+      button.title = success ? '已复制' : '复制失败，请手动选择代码'
+      button.setAttribute('aria-label', button.title)
+
+      setTimeout(function () {
+        button.className = 'code-copy-button'
+        label.innerText = '复制'
+        button.title = '复制代码'
+        button.setAttribute('aria-label', '复制代码')
+      }, 1800)
+    }
+
+    function copyByTextarea() {
+      var textarea = document.createElement('textarea')
+      textarea.value = text
+      textarea.setAttribute('readonly', 'readonly')
+      textarea.style.position = 'fixed'
+      textarea.style.left = '-9999px'
+      document.body.appendChild(textarea)
+      textarea.select()
+      var success = false
+      try {
+        success = document.execCommand('copy')
+      } catch (e) {
+        success = false
+      }
+      document.body.removeChild(textarea)
+      done(success)
+    }
+
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(
+        function () {
+          done(true)
+        },
+        function () {
+          copyByTextarea()
+        }
+      )
+      return
+    }
+
+    copyByTextarea()
+  }
+}
+
 // 回到顶部
 blog.addLoadEvent(function () {
   var toTopDOM = document.getElementById('to-top')
@@ -447,9 +548,10 @@ blog.addLoadEvent(function () {
   }
 })
 
-// 桌面端文章目录
+// 文章目录：桌面端固定右侧，非桌面端从右下角展开
 blog.initPostToc = function () {
   var page = document.querySelector('.page-post')
+  var actions = document.getElementById('footer-actions')
   if (!page) {
     return
   }
@@ -461,8 +563,18 @@ blog.initPostToc = function () {
     return
   }
 
+  var tocToggle = document.createElement('button')
+  tocToggle.id = 'toc-toggle'
+  tocToggle.type = 'button'
+  tocToggle.setAttribute('aria-label', '展开文章目录')
+  tocToggle.title = '文章目录'
+  tocToggle.setAttribute('aria-controls', 'post-toc-panel')
+  tocToggle.setAttribute('aria-expanded', 'false')
+  tocToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>'
+
   var aside = document.createElement('aside')
   aside.className = 'post-toc'
+  aside.id = 'post-toc-panel'
   aside.setAttribute('aria-label', '文章目录')
 
   var list = document.createElement('ul')
@@ -480,9 +592,11 @@ blog.initPostToc = function () {
     var link = document.createElement('a')
     link.href = '#' + encodeURIComponent(heading.id)
     link.textContent = heading.textContent
+    link.title = heading.textContent
     link.onclick = function (event) {
       event.preventDefault()
       setActive(link)
+      closeToc()
       window.scrollTo(0, window.pageYOffset + heading.getBoundingClientRect().top - 16)
       if (history.replaceState) {
         history.replaceState({}, '', '#' + encodeURIComponent(heading.id))
@@ -495,7 +609,33 @@ blog.initPostToc = function () {
   })
 
   aside.appendChild(list)
+  tocToggle.onclick = function (event) {
+    event.stopPropagation()
+    var opened = aside.className.indexOf('open') === -1
+    if (opened) {
+      blog.addClass(aside, 'open')
+    } else {
+      blog.removeClass(aside, 'open')
+    }
+    tocToggle.setAttribute('aria-expanded', opened ? 'true' : 'false')
+  }
+
+  function closeToc() {
+    blog.removeClass(aside, 'open')
+    tocToggle.setAttribute('aria-expanded', 'false')
+  }
+
   document.body.appendChild(aside)
+  if (actions) {
+    actions.appendChild(tocToggle)
+    blog.addClass(actions, 'has-mobile-toc')
+  }
+
+  blog.addEvent(document, 'keydown', function (event) {
+    if (event.key === 'Escape' || event.keyCode === 27) {
+      closeToc()
+    }
+  })
 
   var ticking = false
 
@@ -545,3 +685,4 @@ blog.initPostToc = function () {
 }
 
 blog.addLoadEvent(blog.initPostToc)
+blog.addLoadEvent(blog.initCodeCopy)
