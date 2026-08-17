@@ -236,7 +236,7 @@ extServiceWorker: true  # PWA 离线缓存，Service Worker 预缓存站点资�
 
 ## 文章链接
 
-文章 URL 在构建时根据源 Markdown 文件的 MD5 自动生成，格式为 `/<md5>/`，链接中不包含 `.md` 或 `.html`。源文件内容发生变化后，文章 URL 会随之变化；首页、RSS、sitemap 和文章二维码会自动使用新的 URL。
+文章 URL 在构建时根据源 Markdown 文件的 MD5 自动生成，格式为 `/<md5>/`，链接中不包含 `.md` 或 `.html`。MD5 统一按 LF 换行计算，Windows 本地预览和 Linux 构建结果一致。源文件内容发生变化后，文章 URL 会随之变化；首页、RSS、sitemap 和文章二维码会自动使用新的 URL。
 
 ## 域名配置
 
@@ -247,12 +247,16 @@ extServiceWorker: true  # PWA 离线缓存，Service Worker 预缓存站点资�
 
 ## 部署
 
- ```bash
- # 构建到 dist 目录
- ./blog.sh build
+GitHub Pages 必须将 `Settings -> Pages -> Build and deployment -> Source` 设置为 `GitHub Actions`。仓库提供的 `.github/workflows/pages.yml` 会使用 Jekyll 3.8.5 构建站点，并加载 `_plugins/md5_permalink.rb` 生成 MD5 文章链接。
+
+推送 `main` 分支后 Actions 会自动部署，也可以在 `Actions -> Build and deploy Pages -> Run workflow` 手动触发。
+
+```bash
+# 构建到 dist 目录
+./blog.sh build
 
  # 部署到腾讯云 COS 并刷新 CDN
  ./blog.sh deploy
  ```
 
-如使用 GitHub Pages，将代码推送到仓库即可自动构建。
+以上本地命令不适用于 GitHub Pages 自动部署。
