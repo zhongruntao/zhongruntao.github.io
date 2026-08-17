@@ -23,6 +23,11 @@
   max-width: 100%;
   height: auto;
 }
+.page-post .post h2,
+.page-post .post h3,
+.page-post .post h4 {
+  scroll-margin-top: 20px;
+}
 .page-post .post > iframe {
   margin: 0;
   width: 100%;
@@ -159,6 +164,52 @@
 }
 .page-post .table-container table tbody tr:last-child {
   border-bottom: 0;
+}
+.post-toc {
+  display: none;
+}
+@media screen and (min-width: 1200px) {
+  .post-toc {
+    display: block;
+    position: fixed;
+    top: 96px;
+    right: 24px;
+    width: 210px;
+    max-height: calc(100vh - 144px);
+    overflow: auto;
+    box-sizing: border-box;
+    padding: 0 0 12px 14px;
+    border-left: 2px solid #eaeaea;
+  }
+  .post-toc-title {
+    color: #666666;
+    font-size: 13px;
+    font-weight: bold;
+    line-height: 1.6;
+    margin-bottom: 6px;
+  }
+  .post-toc-list {
+    margin: 0;
+  }
+  .post-toc-list li {
+    list-style: none;
+  }
+  .post-toc-list a {
+    display: block;
+    padding: 4px 0;
+    color: #666666;
+    font-size: 13px;
+    line-height: 1.55;
+    word-break: break-word;
+  }
+  .post-toc-list a:hover,
+  .post-toc-list a.active {
+    color: #000000;
+    font-weight: bold;
+  }
+  .post-toc-list .toc-level-h4 {
+    padding-left: 14px;
+  }
 }
 @media screen and (max-width: 560px) {
   .page-post {
