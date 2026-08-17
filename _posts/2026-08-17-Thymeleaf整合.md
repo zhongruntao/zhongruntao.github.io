@@ -52,9 +52,21 @@ public class ThymeleafController {
 4.模版页面取值
 
 ```html
-    <span th:text="${message}"></span>
+<span th:text="${message}"></span>
 ```
 
-例图:
-![img_2.png](img_2.webp)
+完整页面：
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<span th:text="${message}"></span>
+</body>
+</html>
+```
 
