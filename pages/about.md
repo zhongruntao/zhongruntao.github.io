@@ -25,7 +25,7 @@ title: 关于
 | 代码高亮 | Rouge 3.11.0 |
 | 前端 | 原生 HTML / CSS / JS |
 | 资源优化 | esbuild 生产构建压缩 |
-| 部署 | GitHub Pages Actions 或腾讯云 COS + CDN |
+| 部署 | GitHub Pages Actions |
 
 **主要特性：**
 
