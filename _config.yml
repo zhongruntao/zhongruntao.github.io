@@ -13,7 +13,7 @@ kramdown:
   auto_ids: true
   input: GFM
   syntax_highlighter: rouge
-exclude: ['CNAME', 'README.md', 'LICENSE', '_site', 'dist', 'Gemfile', 'Gemfile.lock', 'blog.sh', 'package.json', 'package-lock.json', 'scripts', 'node_modules']
+exclude: ['CNAME', 'README.md', 'LICENSE', '_site', 'dist', 'source-assets', 'Gemfile', 'Gemfile.lock', 'blog.sh', 'package.json', 'package-lock.json', 'scripts', 'node_modules']
 
 domainUrl: ''
 baseurl: ''
