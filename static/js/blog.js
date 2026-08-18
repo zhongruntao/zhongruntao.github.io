@@ -1,8 +1,8 @@
 // 打印主题标识,请保留出处
 ;(function () {
-  var style1 = 'background:#4BB596;color:#ffffff;border-radius: 2px;'
-  var style2 = 'color:auto;'
-  var author = ' runtao.zhong'
+  const style1 = 'background:#4BB596;color:#ffffff;border-radius: 2px;'
+  const style2 = 'color:auto;'
+  const author = ' runtao.zhong'
   console.info('%c Author %c' + author, style1, style2)
 })()
 
@@ -19,7 +19,7 @@ blog.addLoadEvent = function (func) {
 }
 
 /**
- * 工具，兼容的方式添加事件
+ * 工具，添加事件监听
  * @param {单个DOM节点} dom
  * @param {事件名} eventName
  * @param {事件方法} func
@@ -57,11 +57,11 @@ blog.removeClass = function (dom, className) {
 }
 
 /**
- * 工具，兼容问题，某些OPPO手机不支持ES5的trim方法
+ * 工具，去除字符串首尾空白字符
  * @param {字符串} str
  */
 blog.trim = function (str) {
-  return String.prototype.trim.call(str)
+  return String(str).trim()
 }
 
 /**
@@ -77,7 +77,7 @@ blog.encodeRegChar = function (str) {
  */
 blog.initClickEffect = function (textArr) {
   function createDOM(text) {
-    var dom = document.createElement('span')
+    const dom = document.createElement('span')
     dom.innerText = text
     dom.style.left = 0
     dom.style.top = 0
@@ -93,16 +93,16 @@ blog.initClickEffect = function (textArr) {
   }
 
   blog.addEvent(window, 'click', function (ev) {
-    var tagName = ev.target.tagName.toLocaleLowerCase()
+    const tagName = ev.target.tagName.toLocaleLowerCase()
     if (tagName == 'a') {
       return
     }
-    var text = textArr[Math.floor(Math.random() * textArr.length)]
-    var dom = createDOM(text)
+    const text = textArr[Math.floor(Math.random() * textArr.length)]
+    const dom = createDOM(text)
 
     document.body.appendChild(dom)
-    var w = parseInt(window.getComputedStyle(dom, null).getPropertyValue('width'))
-    var h = parseInt(window.getComputedStyle(dom, null).getPropertyValue('height'))
+    const w = parseInt(window.getComputedStyle(dom, null).getPropertyValue('width'))
+    const h = parseInt(window.getComputedStyle(dom, null).getPropertyValue('height'))
 
     dom.style.left = ev.clientX - w / 2 + 'px'
     dom.style.top = ev.clientY - h + 'px'
@@ -118,7 +118,6 @@ blog.initClickEffect = function (textArr) {
 
     setTimeout(function () {
       document.body.removeChild(dom)
-      dom = null
     }, 520)
   })
 }
@@ -129,10 +128,10 @@ blog.addLoadEvent(function () {
   if (document.getElementsByClassName('page-post').length == 0) {
     return
   }
-  var tables = document.querySelectorAll('table')
-  for (var i = 0; i < tables.length; i++) {
-    var table = tables[i]
-    var elem = document.createElement('div')
+  const tables = document.querySelectorAll('table')
+  for (let i = 0; i < tables.length; i++) {
+    const table = tables[i]
+    const elem = document.createElement('div')
     elem.setAttribute('class', 'table-container')
     table.parentNode.insertBefore(elem, table)
     elem.appendChild(table)
@@ -141,20 +140,20 @@ blog.addLoadEvent(function () {
 
 // 文章代码块复制
 blog.initCodeCopy = function () {
-  var page = document.querySelector('.page-post')
+  const page = document.querySelector('.page-post')
   if (!page) {
     return
   }
 
-  var pres = page.querySelectorAll('pre')
-  for (var i = 0; i < pres.length; i++) {
-    var pre = pres[i]
-    var code = pre.querySelector('code')
+  const pres = page.querySelectorAll('pre')
+  for (let i = 0; i < pres.length; i++) {
+    const pre = pres[i]
+    const code = pre.querySelector('code')
     if (!code || (code.className || '').indexOf('language-mermaid') !== -1) {
       continue
     }
 
-    var container = pre.parentNode
+    let container = pre.parentNode
     if (
       !container.classList ||
       (!container.classList.contains('highlight') && !container.classList.contains('code-block'))
@@ -169,7 +168,7 @@ blog.initCodeCopy = function () {
       continue
     }
 
-    var button = document.createElement('button')
+    const button = document.createElement('button')
     button.type = 'button'
     button.className = 'code-copy-button'
     button.title = '复制代码'
@@ -182,8 +181,8 @@ blog.initCodeCopy = function () {
 
     blog.addEvent(button, 'click', function (event) {
       event.stopPropagation()
-      var currentButton = event.currentTarget
-      var currentCode = currentButton.parentNode.querySelector('code')
+      const currentButton = event.currentTarget
+      const currentCode = currentButton.parentNode.querySelector('code')
       copyText(currentCode.textContent.replace(/^[\r\n]+/, '').replace(/\s+$/, ''), currentButton)
     })
 
@@ -192,7 +191,7 @@ blog.initCodeCopy = function () {
 
   function copyText(text, button) {
     function done(success) {
-      var label = button.querySelector('span')
+      const label = button.querySelector('span')
       button.className = success ? 'code-copy-button copied' : 'code-copy-button failed'
       label.innerText = success ? '已复制' : '复制失败'
       button.title = success ? '已复制' : '复制失败，请手动选择代码'
@@ -208,14 +207,14 @@ blog.initCodeCopy = function () {
     }
 
     function copyByTextarea() {
-      var textarea = document.createElement('textarea')
+      const textarea = document.createElement('textarea')
       textarea.value = text
       textarea.setAttribute('readonly', 'readonly')
       textarea.style.position = 'fixed'
       textarea.style.left = '-9999px'
       document.body.appendChild(textarea)
       textarea.select()
-      var success = false
+      let success = false
       try {
         success = document.execCommand('copy')
       } catch (e) {
@@ -243,16 +242,16 @@ blog.initCodeCopy = function () {
 
 // 回到顶部
 blog.addLoadEvent(function () {
-  var toTopDOM = document.getElementById('to-top')
+  const toTopDOM = document.getElementById('to-top')
   if (!toTopDOM) {
     return
   }
 
   function getScrollTop() {
-    return window.scrollY || document.documentElement.scrollTop || 0
+    return window.scrollY
   }
 
-  var updating = false
+  let updating = false
   function updateToTop() {
     updating = false
     toTopDOM.classList.toggle('show', getScrollTop() > 200)
@@ -279,7 +278,7 @@ blog.addLoadEvent(function () {
     toTopDOM,
     'keydown',
     function (event) {
-      if (event.key === 'Enter' || event.key === ' ' || event.keyCode === 13 || event.keyCode === 32) {
+      if (event.key === 'Enter' || event.key === ' ') {
         event.preventDefault()
         window.scrollTo(0, 0)
       }
@@ -298,9 +297,9 @@ blog.addLoadEvent(function () {
   let imgMoveOrigin = null
   let imgMoveOriginRect = null
   let restoreLock = false
-  let imgArr = document.querySelectorAll('.page-post img')
+  const imgArr = document.querySelectorAll('.page-post img')
 
-  let css = [
+  const css = [
     '.img-move-bg {',
     '  transition: opacity 300ms ease;',
     '  position: fixed;',
@@ -320,7 +319,7 @@ blog.addLoadEvent(function () {
     '  z-index: 101;',
     '}'
   ].join('')
-  var styleDOM = document.createElement('style')
+  const styleDOM = document.createElement('style')
   styleDOM.appendChild(document.createTextNode(css))
   document.head.appendChild(styleDOM)
 
@@ -349,7 +348,7 @@ blog.addLoadEvent(function () {
       width = (height * imgMoveOrigin.naturalWidth) / imgMoveOrigin.naturalHeight
     }
 
-    let img = document.querySelector('.img-move-item')
+    const img = document.querySelector('.img-move-item')
     img.style.left = (document.documentElement.clientWidth - width) / 2 + 'px'
     img.style.top = (window.innerHeight - height) / 2 + 'px'
     img.style.width = width + 'px'
@@ -357,12 +356,12 @@ blog.addLoadEvent(function () {
   }
 
   function restore() {
-    if (restoreLock == true) {
+    if (restoreLock) {
       return
     }
     restoreLock = true
-    let div = document.querySelector('.img-move-bg')
-    let img = document.querySelector('.img-move-item')
+    const div = document.querySelector('.img-move-bg')
+    const img = document.querySelector('.img-move-item')
     if (!div || !img) {
       restoreLock = false
       imgMoveOrigin = null
@@ -386,19 +385,19 @@ blog.addLoadEvent(function () {
 
   function imgClickEvent(event) {
     event.preventDefault()
-    let source = event.currentTarget
+    const source = event.currentTarget
     if (imgMoveOrigin || !source.complete || !source.naturalWidth) {
       return
     }
 
     imgMoveOrigin = source
-    let originRect = source.getBoundingClientRect()
+    const originRect = source.getBoundingClientRect()
     imgMoveOriginRect = originRect
 
-    let div = document.createElement('div')
+    const div = document.createElement('div')
     div.className = 'img-move-bg'
 
-    let img = document.createElement('img')
+    const img = document.createElement('img')
     img.className = 'img-move-item'
     img.src = imgMoveOrigin.currentSrc || imgMoveOrigin.src
     img.style.left = originRect.left + 'px'
@@ -428,8 +427,8 @@ blog.addLoadEvent(function () {
 
 // 切换夜间模式
 blog.addLoadEvent(function () {
-  var $logo = document.querySelector('.header .logo')
-  var $themeToggle = document.getElementById('theme-toggle')
+  const $logo = document.querySelector('.header .logo')
+  const $themeToggle = document.getElementById('theme-toggle')
 
   function toggleTheme() {
     blog.setDarkTheme(!blog.darkTheme)
@@ -455,13 +454,11 @@ blog.addLoadEvent(function () {
     return
   }
   const list = document.querySelectorAll('.post h1, .post h2, .post h3, .post h4, .post h5')
-  for (var i = 0; i < list.length; i++) {
+  for (let i = 0; i < list.length; i++) {
     blog.addEvent(list[i], 'click', function (event) {
       const el = event.currentTarget
-      if (el.scrollIntoView) {
-        el.scrollIntoView({ block: 'start' })
-      }
-      if (el.id && history.replaceState) {
+      el.scrollIntoView({ block: 'start' })
+      if (el.id) {
         history.replaceState({}, '', '#' + el.id)
       }
     })
@@ -470,20 +467,18 @@ blog.addLoadEvent(function () {
 
 // 文章目录：桌面端固定右侧，非桌面端从右下角展开
 blog.initPostToc = function () {
-  var page = document.querySelector('.page-post')
-  var actions = document.getElementById('footer-actions')
+  const page = document.querySelector('.page-post')
+  const actions = document.getElementById('footer-actions')
   if (!page) {
     return
   }
 
-  var headings = Array.prototype.slice.call(
-    page.querySelectorAll('.post h3, .post h4, .post h5')
-  )
+  const headings = Array.from(page.querySelectorAll('.post h3, .post h4, .post h5'))
   if (headings.length < 2) {
     return
   }
 
-  var tocToggle = document.createElement('button')
+  const tocToggle = document.createElement('button')
   tocToggle.id = 'toc-toggle'
   tocToggle.type = 'button'
   tocToggle.setAttribute('aria-label', '展开文章目录')
@@ -492,28 +487,28 @@ blog.initPostToc = function () {
   tocToggle.setAttribute('aria-expanded', 'false')
   tocToggle.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8 6h13"/><path d="M8 12h13"/><path d="M8 18h13"/><path d="M3 6h.01"/><path d="M3 12h.01"/><path d="M3 18h.01"/></svg>'
 
-  var aside = document.createElement('aside')
+  const aside = document.createElement('aside')
   aside.className = 'post-toc'
   aside.id = 'post-toc-panel'
   aside.setAttribute('aria-label', '文章目录')
 
-  var tocOverlay = document.createElement('div')
+  const tocOverlay = document.createElement('div')
   tocOverlay.className = 'post-toc-overlay'
   tocOverlay.setAttribute('aria-hidden', 'true')
 
-  var list = document.createElement('ul')
+  const list = document.createElement('ul')
   list.className = 'post-toc-list'
-  var links = []
+  const links = []
 
   headings.forEach(function (heading, index) {
     if (!heading.id) {
       heading.id = 'toc-heading-' + (index + 1)
     }
 
-    var item = document.createElement('li')
+    const item = document.createElement('li')
     item.className = 'toc-level-' + heading.tagName.toLowerCase()
 
-    var link = document.createElement('a')
+    const link = document.createElement('a')
     link.href = '#' + encodeURIComponent(heading.id)
     link.textContent = heading.textContent
     link.title = heading.textContent
@@ -522,9 +517,7 @@ blog.initPostToc = function () {
       setActive(link)
       setTocOpen(false)
       window.scrollTo(0, window.scrollY + heading.getBoundingClientRect().top - 16)
-      if (history.replaceState) {
-        history.replaceState({}, '', '#' + encodeURIComponent(heading.id))
-      }
+      history.replaceState({}, '', '#' + encodeURIComponent(heading.id))
     }
 
     links.push(link)
@@ -535,7 +528,7 @@ blog.initPostToc = function () {
   aside.appendChild(list)
   tocToggle.onclick = function (event) {
     event.stopPropagation()
-    var opened = !aside.classList.contains('open')
+    const opened = !aside.classList.contains('open')
     setTocOpen(opened)
   }
 
@@ -559,25 +552,21 @@ blog.initPostToc = function () {
   }
 
   blog.addEvent(document, 'keydown', function (event) {
-    if (event.key === 'Escape' || event.keyCode === 27) {
+    if (event.key === 'Escape') {
       closeToc()
     }
   })
 
-  var desktopViewport = window.matchMedia('(min-width: 1200px)')
+  const desktopViewport = window.matchMedia('(min-width: 1200px)')
   function resetOnDesktop(event) {
     if (event.matches) {
       setTocOpen(false)
     }
   }
 
-  if (desktopViewport.addEventListener) {
-    desktopViewport.addEventListener('change', resetOnDesktop)
-  } else if (desktopViewport.addListener) {
-    desktopViewport.addListener(resetOnDesktop)
-  }
+  desktopViewport.addEventListener('change', resetOnDesktop)
 
-  var ticking = false
+  let ticking = false
 
   function setActive(link) {
     links.forEach(function (item) {
@@ -589,7 +578,7 @@ blog.initPostToc = function () {
   function updateActiveHeading() {
     ticking = false
 
-    var scrolledToBottom =
+    const scrolledToBottom =
       window.innerHeight + window.scrollY >=
       document.documentElement.scrollHeight - 4
 
@@ -598,7 +587,7 @@ blog.initPostToc = function () {
       return
     }
 
-    var activeLink = null
+    let activeLink = null
     links.forEach(function (link, index) {
       if (headings[index].getBoundingClientRect().top <= 120) {
         activeLink = link

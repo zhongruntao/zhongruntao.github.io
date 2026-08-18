@@ -1,7 +1,7 @@
 <script>
 ;(function () {
-  var toggle = document.getElementById('qrcode-toggle')
-  var actions = document.getElementById('footer-actions')
+  const toggle = document.getElementById('qrcode-toggle')
+  const actions = document.getElementById('footer-actions')
   if (!document.querySelector('.page-post') || !toggle || !actions) {
     return
   }
@@ -9,8 +9,8 @@
   toggle.hidden = false
   actions.className += ' has-qrcode'
 
-  var overlay = null
-  var loadingScript = false
+  let overlay = null
+  let loadingScript = false
 
   function closeQrcode() {
     if (!overlay) {
@@ -34,7 +34,7 @@
     openOverlay('<span class="qrcode-loading">二维码生成中...</span>', '')
 
     loadingScript = true
-    var script = document.createElement('script')
+    const script = document.createElement('script')
     script.src = blog.baseurl + '/static/js/vendor/qrcode-generator-1.4.4.min.js?t=' + blog.buildAt
     script.onload = function () {
       loadingScript = false
@@ -60,8 +60,8 @@
       window.qrcode.stringToBytes = window.qrcode.stringToBytesFuncs['UTF-8']
     }
 
-    var url = location.origin + location.pathname + location.search
-    var qr = window.qrcode(0, 'M')
+    const url = location.origin + location.pathname + location.search
+    const qr = window.qrcode(0, 'M')
     qr.addData(url)
     qr.make()
 
@@ -85,26 +85,26 @@
     overlay = document.createElement('div')
     overlay.className = 'qrcode-overlay'
 
-    var dialog = document.createElement('div')
+    const dialog = document.createElement('div')
     dialog.className = 'qrcode-dialog'
     dialog.setAttribute('role', 'dialog')
     dialog.setAttribute('aria-modal', 'true')
     dialog.setAttribute('aria-label', '文章二维码')
 
-    var image = document.createElement('div')
+    const image = document.createElement('div')
     image.className = 'qrcode-image'
     image.innerHTML = qrHtml
 
-    var text = document.createElement('div')
+    const text = document.createElement('div')
     text.className = 'qrcode-text'
     text.innerText = '扫码在手机上阅读'
 
-    var link = document.createElement('a')
+    const link = document.createElement('a')
     link.className = 'qrcode-link'
     link.href = url
     link.innerText = url
 
-    var close = document.createElement('button')
+    const close = document.createElement('button')
     close.type = 'button'
     close.className = 'qrcode-close'
     close.setAttribute('aria-label', '关闭二维码')
@@ -132,7 +132,7 @@
   })
 
   blog.addEvent(document, 'keydown', function (event) {
-    if (event.key === 'Escape' || event.keyCode === 27) {
+    if (event.key === 'Escape') {
       closeQrcode()
     }
   })

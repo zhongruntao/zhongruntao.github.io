@@ -17,7 +17,7 @@ self.addEventListener('install', function (event) {
       })
       .then(function (html) {
         return caches.open(cacheKey).then(function (cache) {
-          var urls = collectCacheUrls(html)
+          const urls = collectCacheUrls(html)
           return Promise.allSettled(
             urls.map(function (url) {
               return cache.add(url)
@@ -53,7 +53,7 @@ self.addEventListener('activate', function (event) {
 })
 
 self.addEventListener('fetch', function (event) {
-  var request = event.request
+  const request = event.request
 
   if (request.method !== 'GET') {
     return
@@ -69,7 +69,7 @@ self.addEventListener('fetch', function (event) {
 
   event.respondWith(
     caches.open(cacheKey).then(function (cache) {
-      var requestCacheUrl = new URL(request.url).pathname
+      const requestCacheUrl = new URL(request.url).pathname
       return cache.match(requestCacheUrl).then(function (cachedResponse) {
         if (cachedResponse) {
           return cachedResponse
@@ -97,18 +97,18 @@ self.addEventListener('fetch', function (event) {
 })
 
 function collectCacheUrls(html) {
-  var pattern = /(href|src)=(?:"([^"]+)"|'([^']+)')/g
-  var urls = new Set([baseUrl + '/index.html'])
-  var match
+  const pattern = /(href|src)=(?:"([^"]+)"|'([^']+)')/g
+  const urls = new Set([baseUrl + '/index.html'])
+  let match
 
   while ((match = pattern.exec(html)) !== null) {
-    var value = match[2] || match[3]
+    const value = match[2] || match[3]
     if (!value) {
       continue
     }
 
     try {
-      var url = new URL(value, self.registration.scope)
+      const url = new URL(value, self.registration.scope)
       if (url.origin !== self.origin) {
         continue
       }

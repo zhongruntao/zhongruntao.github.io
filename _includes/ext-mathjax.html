@@ -3,7 +3,6 @@
   .has-jax {
     -webkit-user-select: none;
     -moz-user-select: none;
-    -ms-user-select: none;
     user-select: none;
     background-color: transparent !important;
     line-height: normal !important;
@@ -17,17 +16,17 @@
 </style>
 <script>
   ;(function () {
-    var mathPattern = /\$\$[\s\S]+?\$\$|\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\]|\$(?!\s)(?:\\[\s\S]|[A-Za-z(](?:[^$]*?[^\s$])?)?\$/
+    const mathPattern = /\$\$[\s\S]+?\$\$|\\\([\s\S]+?\\\)|\\\[[\s\S]+?\\\]|\$(?!\s)(?:\\[\s\S]|[A-Za-z(](?:[^$]*?[^\s$])?)?\$/
 
     function hasMath() {
-      var post = document.querySelector('.page-post .post')
+      const post = document.querySelector('.page-post .post')
       if (!post) {
         return false
       }
 
-      var walker = document.createTreeWalker(post, NodeFilter.SHOW_TEXT, {
+      const walker = document.createTreeWalker(post, NodeFilter.SHOW_TEXT, {
         acceptNode: function (node) {
-          var parent = node.parentElement
+          const parent = node.parentElement
           if (!parent || parent.closest('pre, code, script, style, textarea')) {
             return NodeFilter.FILTER_REJECT
           }
@@ -35,7 +34,7 @@
         }
       })
 
-      var node
+      let node
       while ((node = walker.nextNode())) {
         if (mathPattern.test(node.nodeValue)) {
           return true
@@ -69,7 +68,7 @@
       }
     }
 
-    var script = document.createElement('script')
+    const script = document.createElement('script')
     script.id = 'MathJax-script'
     script.async = true
     script.src = blog.baseurl + '/static/js/vendor/mathjax-3.2.2.tex-svg-full.js?t=' + blog.buildAt

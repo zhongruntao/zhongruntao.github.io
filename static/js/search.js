@@ -1,13 +1,13 @@
 // 加载全文检索数据，优先使用当前构建版本对应的本地缓存
 function loadAllPostData(callback) {
-  var cache = readCachedPostData()
+  const cache = readCachedPostData()
   if (cache) {
     callback(cache)
     return
   }
 
-  var controller = new AbortController()
-  var timeoutId = setTimeout(function () {
+  const controller = new AbortController()
+  const timeoutId = setTimeout(function () {
     controller.abort()
   }, 20000)
 
@@ -56,20 +56,20 @@ function cachePostData(data) {
 
 // 搜索功能
 blog.addLoadEvent(function () {
-  var titles = []
-  var contents = []
-  var input = document.getElementById('search-input')
-  var status = document.getElementById('search-status')
-  var loadingDOM = document.querySelector('.page-search h1 img')
+  let titles = []
+  let contents = []
+  const input = document.getElementById('search-input')
+  const status = document.getElementById('search-status')
+  const loadingDOM = document.querySelector('.page-search h1 img')
 
   // 非搜索页面
   if (!input || !status || !loadingDOM) {
     return
   }
 
-  var ready = false
-  var inputLock = false
-  var searchTimer = null
+  let ready = false
+  let inputLock = false
+  let searchTimer = null
 
   loadingDOM.style.opacity = 1
   setStatus('正在加载搜索索引...')
@@ -100,7 +100,7 @@ blog.addLoadEvent(function () {
   }
 
   function parseContent(data) {
-    var root = new DOMParser().parseFromString(data, 'text/html')
+    const root = new DOMParser().parseFromString(data, 'text/html')
     return Array.prototype.map.call(root.querySelectorAll('li'), function (dom) {
       return dom.textContent
     })
@@ -113,9 +113,9 @@ blog.addLoadEvent(function () {
   }
 
   function highlight(text, pattern) {
-    var result = ''
-    var lastIndex = 0
-    var match
+    let result = ''
+    let lastIndex = 0
+    let match
 
     while ((match = pattern.exec(text)) !== null) {
       result += escapeHtml(text.slice(lastIndex, match.index))
@@ -127,27 +127,27 @@ blog.addLoadEvent(function () {
     return result + escapeHtml(text.slice(lastIndex))
   }
 
-  function searchNow(key) {
+  function searchNow(value) {
     if (!ready) {
       return
     }
 
-    key = blog.trim(key)
-    var pattern = key
+    const key = blog.trim(value)
+    const pattern = key
       ? new RegExp(blog.encodeRegChar(key), 'gi')
       : null
-    var doms = document.querySelectorAll('.list-search li')
-    var resultCount = 0
+    const doms = document.querySelectorAll('.list-search li')
+    let resultCount = 0
 
-    for (var i = 0; i < doms.length; i++) {
-      var title = titles[i] || ''
-      var content = contents[i] || ''
-      var domItem = doms[i]
-      var domTitle = domItem.querySelector('.title')
-      var domContent = domItem.querySelector('.content')
-      var matchedTitle = pattern ? pattern.exec(title) : null
+    for (let i = 0; i < doms.length; i++) {
+      const title = titles[i] || ''
+      const content = contents[i] || ''
+      const domItem = doms[i]
+      const domTitle = domItem.querySelector('.title')
+      const domContent = domItem.querySelector('.content')
+      const matchedTitle = pattern ? pattern.exec(title) : null
       if (pattern) pattern.lastIndex = 0
-      var matchedContent = pattern ? pattern.exec(content) : null
+      const matchedContent = pattern ? pattern.exec(content) : null
       if (pattern) pattern.lastIndex = 0
 
       if (pattern) {
@@ -175,10 +175,10 @@ blog.addLoadEvent(function () {
       }
 
       if (matchedContent) {
-        var left = Math.max(matchedContent.index - 10, 0)
-        var right = Math.min(left + 100, content.length)
-        var snippet = content.slice(left, right)
-        var snippetPattern = new RegExp(blog.encodeRegChar(key), 'gi')
+        const left = Math.max(matchedContent.index - 10, 0)
+        const right = Math.min(left + 100, content.length)
+        const snippet = content.slice(left, right)
+        const snippetPattern = new RegExp(blog.encodeRegChar(key), 'gi')
         domContent.innerHTML = highlight(snippet, snippetPattern) + '...'
       } else {
         domContent.innerHTML = escapeHtml(content.slice(0, 100)) + '...'
