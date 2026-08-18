@@ -15,7 +15,7 @@ kramdown:
   syntax_highlighter: rouge
 exclude: ['CNAME', 'README.md', 'LICENSE', '_site', 'dist', 'source-assets', 'Gemfile', 'Gemfile.lock', 'blog.sh', 'package.json', 'package-lock.json', 'scripts', 'node_modules']
 
-domainUrl: ''
+domainUrl: 'https://maver.cn'
 baseurl: ''
 
 # 菜单
