@@ -171,13 +171,13 @@ blog.initCodeCopy = function () {
     const button = document.createElement('button')
     button.type = 'button'
     button.className = 'code-copy-button'
-    button.title = '复制代码'
-    button.setAttribute('aria-label', '复制代码')
+    button.title = 'Copy code'
+    button.setAttribute('aria-label', 'Copy code')
     button.innerHTML =
       '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
       '<rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>' +
       '<path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>' +
-      '</svg><span>复制</span>'
+      '</svg><span>copy</span>'
 
     blog.addEvent(button, 'click', function (event) {
       event.stopPropagation()
@@ -193,16 +193,16 @@ blog.initCodeCopy = function () {
     function done(success) {
       const label = button.querySelector('span')
       button.className = success ? 'code-copy-button copied' : 'code-copy-button failed'
-      label.innerText = success ? '已复制' : '复制失败'
-      button.title = success ? '已复制' : '复制失败，请手动选择代码'
+      label.innerText = success ? 'copied' : 'copy failed'
+      button.title = success ? 'Copied' : 'Copy failed, please select code manually'
       button.setAttribute('aria-label', button.title)
 
       clearTimeout(button.resetTimer)
       button.resetTimer = setTimeout(function () {
         button.className = 'code-copy-button'
-        label.innerText = '复制'
-        button.title = '复制代码'
-        button.setAttribute('aria-label', '复制代码')
+        label.innerText = 'copy'
+        button.title = 'Copy code'
+        button.setAttribute('aria-label', 'Copy code')
       }, 1800)
     }
 
