@@ -54,6 +54,7 @@
         return
       }
 
+      // Kramdown 输出 MathJax 2 的 script 格式，MathJax 3 需先转回 TeX 分隔符
       post.querySelectorAll(legacyMathSelector).forEach(function (script) {
         const displayMode = /mode=display/i.test(script.type)
         const source = script.textContent
