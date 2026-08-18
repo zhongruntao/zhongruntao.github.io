@@ -7,6 +7,6 @@
 		endcapture %} {%- endif %} {%- assign href = menu.url %} {%- unless
 		href contains "://" %} {% capture href %}{{ site.baseurl }}{{ menu.url
 		}}{% endcapture %} {%- endunless -%} <a href="{{href}}"
-			{{target}} class="hover-underline">{{ menu.title }}</a> {% endfor -%}
+			{{target}}{% if menu.target == "_blank" %} rel="noopener noreferrer"{% endif %} class="hover-underline">{{ menu.title }}</a> {% endfor -%}
 	</nav>
 </header>

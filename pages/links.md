@@ -6,7 +6,7 @@ title: 书签
 <ul>
   {%- for link in site.links %}
   <li>
-    <p><a href="{{ link.url }}" title="{{ link.desc }}" target="_blank" >{{ link.title }}</a></p>
+    <p><a href="{{ link.url }}" title="{{ link.desc }}" target="_blank" rel="noopener noreferrer">{{ link.title }}</a></p>
   </li>
   {%- endfor %}
 </ul>

@@ -15,11 +15,12 @@
 - 文章二维码，手机扫码打开当前文章
 - MathJax 数学公式渲染，从 jsDelivr 按文章内容按需加载
 - Mermaid 图表渲染，从 jsDelivr 按文章内容按需加载
-- PWA 离线缓存
+- PWA 离线缓存和可安装 Manifest
 - 文章 URL 基于源文件 MD5 自动生成
 - 静态资源缓存版本基于站点源码内容指纹生成，重建未变更内容时可继续复用缓存
 - 文章图片自动补充懒加载、异步解码和原始宽高，降低布局偏移
 - 页面使用 `<main>` 语义化主内容区域，适配手机、平板和桌面浏览器
+- SEO 自动输出 canonical、文章摘要、Open Graph 和 Twitter Card
 
 ## 质量快照
 
@@ -141,6 +142,7 @@ links:
 | `static/img/logo.webp`   | 页头头像、预加载图片     | `_includes/header.html`、`_includes/head.html` |
 | `static/img/logo.jpg`    | Apple 触摸图标           | `_includes/head.html`       |
 | `static/img/favicon.ico` | 浏览器标签页图标         | `_includes/head.html`       |
+| `static/img/icon-192.png` / `static/img/icon-512.png` | PWA 图标 | `static/manifest.webmanifest` |
 
 替换文件即可更新图标。根目录下的 `favicon.ico` 当前未被站点引用。
 
@@ -235,11 +237,19 @@ Rouge 会按语言高亮，文章页会自动显示复制按钮。Mermaid 图使
 
 | 文件                     | 用途             |
 |--------------------------|------------------|
+| `robots.txt`             | 爬虫规则、sitemap 声明 |
+| `static/manifest.webmanifest` | PWA 安装信息 |
 | `static/xml/sitemap.xml` | 站点地图         |
 | `static/xml/rss.xml`     | RSS 订阅         |
 | `static/xml/search.xml`  | 站内搜索内容索引 |
 
 这些文件由 Jekyll 模板生成，通常不需要手工编辑。
+
+页面会自动生成 `canonical`、Open Graph 和 Twitter Card。文章描述优先读取 Front Matter 的 `description`；未填写时自动截取文章开头作为摘要：
+
+```yaml
+description: 一句话说明这篇文章解决什么问题。
+```
 
 ## 文章 MD5 链接
 
@@ -293,6 +303,8 @@ extServiceWorker: true  # PWA 离线缓存
 - `buildAt` 由源码内容指纹生成，并用于 CSS、JS、搜索索引和二维码脚本的缓存参数
 - 文章本地图片自动添加 `loading="lazy"`、`decoding="async"`、`width`、`height`
 - 页头头像使用 WebP 并在 HTML 中预加载
+- 文章页提前 `preconnect` jsDelivr，降低公式和图表资源的连接建立时间
+- Mermaid 渲染前预留占位高度，降低源码块替换成图表时的布局跳动
 
 ## 浏览器支持
 

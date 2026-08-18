@@ -1,4 +1,17 @@
 {%- assign buildAt = site.buildAt -%}
+{%- assign canonical_url = site.domainUrl | append: site.baseurl | append: page.url -%}
+{%- assign is_article = false -%}
+{%- if page.date -%}
+  {%- assign is_article = true -%}
+{%- endif -%}
+{%- assign has_cdn_feature = site.extMath or site.extMermaid -%}
+{%- assign meta_description = page.description | default: '' -%}
+{%- if meta_description == '' and page.excerpt -%}
+  {%- assign meta_description = page.excerpt | strip_html | strip_newlines | strip | truncate: 150 -%}
+{%- endif -%}
+{%- if meta_description == '' -%}
+  {%- assign meta_description = site.description -%}
+{%- endif -%}
 <head>
   <title>{{ page.title }}|{{ site.title }}</title>
   <meta charset="utf-8" />
@@ -8,17 +21,38 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="applicable-device" content="pc,mobile">
   <meta name="author" content="{{ site.author }}" />
+  <meta name="description" content="{{ meta_description | escape }}"/>
   {%- if page.categories %}
-  <meta name="description" content="{{ page.title }}"/>
   <meta name="keywords" content="{{ site.author }}{% for category in page.categories %},{{ category }}{% endfor %}"/>
   {% else %}
-  <meta name="description" content="{{ site.description }}"/>
   <meta name="keywords" content="{{ site.keywords }}"/>
   {% endif -%}
+  <link rel="canonical" href="{{ canonical_url | escape }}" />
+  <meta property="og:site_name" content="{{ site.title | escape }}" />
+  <meta property="og:title" content="{{ page.title | escape }}" />
+  <meta property="og:description" content="{{ meta_description | escape }}" />
+  <meta property="og:url" content="{{ canonical_url | escape }}" />
+  <meta property="og:image" content="{{ site.domainUrl | append: site.baseurl | append: '/static/img/logo.jpg' | escape }}" />
+  <meta property="og:locale" content="zh_CN" />
+  {%- if is_article %}
+  <meta property="og:type" content="article" />
+  <meta property="article:published_time" content="{{ page.date | date_to_xmlschema }}" />
+  {%- else %}
+  <meta property="og:type" content="website" />
+  {%- endif %}
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="{{ page.title | escape }}" />
+  <meta name="twitter:description" content="{{ meta_description | escape }}" />
+  <meta name="twitter:image" content="{{ site.domainUrl | append: site.baseurl | append: '/static/img/logo.jpg' | escape }}" />
   <link rel="alternate" type="application/rss+xml" title="{{ site.title | escape }}" href="{{ site.domainUrl | append: site.baseurl | append: '/static/xml/rss.xml' }}" />
   <link rel="icon" href="{{site.baseurl}}/static/img/favicon.ico" />
+  <link rel="manifest" href="{{site.baseurl}}/static/manifest.webmanifest" />
   <link rel="preload" as="image" href="{{site.baseurl}}/static/img/logo.webp" fetchpriority="high" />
   <link rel="apple-touch-icon" href="{{site.baseurl}}/static/img/logo.jpg" />
+  {%- if is_article and has_cdn_feature %}
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+  {%- endif %}
   <link rel="stylesheet" href="{{site.baseurl}}/static/css/common.css?t={{buildAt}}">
   <link rel="stylesheet" href="{{site.baseurl}}/static/css/theme-dark.css?t={{buildAt}}">
   {%- if page.layout == "mypost" %}

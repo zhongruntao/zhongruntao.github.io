@@ -1,6 +1,6 @@
 ---
 layout: mypost
-title: 单表命令
+title: 学生管理系统功能设计
 categories: [ C ]
 date: 2026-08-03
 ---
