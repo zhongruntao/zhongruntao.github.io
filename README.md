@@ -1,6 +1,6 @@
 # 知行合一
 
-基于 Jekyll 3.8.5 的个人技术博客。站点为纯静态输出，适配手机、平板和桌面浏览器，当前支持 GitHub Pages Actions 自动部署，也保留了腾讯云 COS 手动部署脚本。
+基于 Jekyll 3.8.5 的个人技术博客。站点为纯静态输出，适配手机、平板和桌面浏览器，通过 GitHub Pages Actions 自动部署。
 
 ## 功能特性
 
@@ -35,7 +35,7 @@
 ├── Gemfile             # Ruby 依赖
 ├── package.json        # 生产构建压缩依赖
 ├── scripts/            # 构建辅助脚本
-├── blog.sh             # 本地预览、构建和 COS 部署脚本
+├── blog.sh             # 本地预览和生产构建脚本
 ├── index.html          # 首页
 └── service-worker.js   # PWA Service Worker
 ```
@@ -46,7 +46,7 @@
 
 - Ruby 2.7+
 - Bundler
-- Node.js 18+（仅生产构建和部署压缩需要）
+- Node.js 18+（仅生产构建压缩需要）
 
 安装依赖并启动本地服务：
 
@@ -56,7 +56,7 @@ npm install
 ./blog.sh run
 ```
 
-`./blog.sh run` 用于本地预览，保留未压缩源码；`./blog.sh build` 和 `./blog.sh deploy` 会先构建 Jekyll，再通过 esbuild 压缩产物中的自定义 JS、CSS 和 `service-worker.js`。源码文件保留注释，方便维护。
+`./blog.sh run` 用于本地预览，保留未压缩源码；`./blog.sh build` 会先构建 Jekyll，再通过 esbuild 压缩产物中的自定义 JS、CSS 和 `service-worker.js`。源码文件保留注释，方便维护。线上部署由 GitHub Pages Actions 完成压缩。
 
 默认访问 `http://localhost:8080`。指定端口运行：
 
@@ -253,7 +253,7 @@ extServiceWorker: true  # PWA 离线缓存
 
 ### GitHub Pages
 
-仓库提供 [.github/workflows/pages.yml](.github/workflows/pages.yml)，使用 Ruby 2.7、Bundler 和 Jekyll 3.8.5 构建站点。
+仓库提供 [.github/workflows/pages.yml](.github/workflows/pages.yml)，使用 Ruby 2.7、Bundler、Jekyll 3.8.5、Node.js 和 esbuild 构建并压缩站点。
 
 GitHub 仓库需要设置：
 
@@ -268,20 +268,6 @@ Actions -> Build and deploy Pages -> Run workflow
 ```
 
 手动触发。
-
-### 腾讯云 COS
-
-本机需要安装并配置 `cos-upload`，且可访问 `curl`：
-
-```bash
-# 构建到 dist 目录
-./blog.sh build
-
-# 构建、上传到 COS 并刷新 CDN
-./blog.sh deploy
-```
-
-这套脚本适用于 COS 手动部署，不参与 GitHub Pages 自动部署。
 
 ### 域名
 
