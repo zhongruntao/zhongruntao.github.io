@@ -10,13 +10,31 @@
 - 文章目录：桌面端固定在右侧，非桌面端从右下角按钮展开
 - Rouge 代码高亮，提供明暗两套配色
 - 文章代码块一键复制
-- 生产构建自动压缩 JS / CSS，并去除产物注释
+- 生产构建自动压缩 JS / CSS，并去除产物注释；第三方 vendor 文件保持原样
 - 图片点击全屏预览
 - 文章二维码，手机扫码打开当前文章
-- MathJax 数学公式渲染，本地按需加载
-- Mermaid 图表渲染，本地按需加载
+- MathJax 数学公式渲染，从 jsDelivr 按文章内容按需加载
+- Mermaid 图表渲染，从 jsDelivr 按文章内容按需加载
 - PWA 离线缓存
 - 文章 URL 基于源文件 MD5 自动生成
+- 静态资源缓存版本基于站点源码内容指纹生成，重建未变更内容时可继续复用缓存
+- 文章图片自动补充懒加载、异步解码和原始宽高，降低布局偏移
+- 页面使用 `<main>` 语义化主内容区域，适配手机、平板和桌面浏览器
+
+## 质量快照
+
+2026-08-18 使用 Lighthouse 13.4.1 测试线上文章
+[MathJax 与 Mermaid 加载测试](https://maver.cn/20240e78eee91e4b4eee4a2c62ca0738/)：
+
+| 客户端 | Performance | Accessibility | Best Practices | SEO |
+|---|---:|---:|---:|---:|
+| 手机 | 74 | 98 | 100 | 100 |
+| 平板（820×1180 / DPR 2） | 86 | 98 | 100 | 100 |
+| 电脑 | 92 | 98 | 100 | 100 |
+
+当前可访问性扣分来自文章标题从 `h3` 开始，导致 `h1` 后跳过 `h2`；这是当前文章书写约定。公式和 Mermaid 测试页在 412、820、1366 像素宽度下均正常渲染，无横向溢出。
+
+手机性能瓶颈主要是 MathJax `tex-svg-full.js` 约 `640 KiB` 的传输体积；Mermaid 渲染替换原始代码块时会带来一定布局偏移。性能分数会受网络和 CDN 波动影响，以上结果仅作为当时快照。
 
 ## 目录结构
 
@@ -35,6 +53,7 @@
 ├── Gemfile             # Ruby 依赖
 ├── package.json        # 生产构建压缩依赖
 ├── scripts/            # 构建辅助脚本
+├── source-assets/      # 源素材，不参与 Jekyll 构建
 ├── blog.sh             # 本地预览和生产构建脚本
 ├── index.html          # 首页
 └── service-worker.js   # PWA Service Worker
@@ -46,13 +65,12 @@
 
 - Ruby 2.7+
 - Bundler
-- Node.js 18+（仅生产构建压缩需要）
+- Node.js 22+（仅生产构建压缩需要，与 GitHub Actions 保持一致）
 
 安装依赖并启动本地服务：
 
 ```bash
 bundle install
-npm install
 ./blog.sh run
 ```
 
@@ -65,6 +83,13 @@ npm install
 ```
 
 Windows 用户建议在 Git Bash、WSL 或其他 Bash 兼容环境中执行 `blog.sh`。
+
+如需执行生产构建，先安装 Node 依赖：
+
+```bash
+npm ci
+./blog.sh build
+```
 
 ## 站点配置
 
@@ -111,10 +136,11 @@ links:
 
 ## 头像与图标
 
-| 文件                     | 用途                     | 引用位置                                       |
-|--------------------------|--------------------------|------------------------------------------------|
-| `static/img/logo.jpg`    | 页头头像、Apple 触摸图标 | `_includes/header.html`、`_includes/head.html` |
-| `static/img/favicon.ico` | 浏览器标签页图标         | `_includes/head.html`                          |
+| 文件                     | 用途                     | 引用位置                    |
+|--------------------------|--------------------------|-----------------------------|
+| `static/img/logo.webp`   | 页头头像、预加载图片     | `_includes/header.html`、`_includes/head.html` |
+| `static/img/logo.jpg`    | Apple 触摸图标           | `_includes/head.html`       |
+| `static/img/favicon.ico` | 浏览器标签页图标         | `_includes/head.html`       |
 
 替换文件即可更新图标。根目录下的 `favicon.ico` 当前未被站点引用。
 
@@ -249,6 +275,29 @@ extServiceWorker: true  # PWA 离线缓存
 
 文章目录和代码复制按钮当前为默认功能，未单独设置开关。
 
+## 第三方 CDN 与性能
+
+站点自身资源全部由 GitHub Pages 提供，只有两个大体积渲染库从 jsDelivr 按需加载：
+
+| 功能 | 版本 | 加载时机 |
+|---|---|---|
+| MathJax | 3.2.2 | 文章中检测到公式时 |
+| Mermaid | 11.16.1 | 文章中检测到 `mermaid` 代码块时 |
+
+两个脚本都固定版本并启用 Subresource Integrity。普通文章不会请求这两个库；包含公式或图表的文章会在渲染时请求。缺点是依赖第三方 CDN 可用性，CDN 不可访问时公式或图表无法渲染，但页面主体内容仍可访问。如需完全自主可控，可把对应脚本改回本地加载，代价是增加仓库和部署产物体积。
+
+构建时还会做这些优化：
+
+- 自定义 JS、CSS 和 `service-worker.js` 使用 esbuild 压缩，并移除注释
+- `vendor` 目录中的第三方脚本不参与压缩，保留上游发布内容
+- `buildAt` 由源码内容指纹生成，并用于 CSS、JS、搜索索引和二维码脚本的缓存参数
+- 文章本地图片自动添加 `loading="lazy"`、`decoding="async"`、`width`、`height`
+- 页头头像使用 WebP 并在 HTML 中预加载
+
+## 浏览器支持
+
+本站面向现代浏览器，支持当前版本和近两年主流版本的 Chrome、Edge、Firefox 和 Safari，不兼容 IE。源码使用 `const` / `let`、模块脚本、CSS 自定义属性等现代特性。
+
 ## 部署
 
 ### GitHub Pages
@@ -269,7 +318,23 @@ Actions -> Build and deploy Pages -> Run workflow
 
 手动触发。
 
+如果从零新建仓库，仓库名必须使用：
+
+```text
+<用户名>.github.io
+```
+
+这是 GitHub Pages 的默认用户站点域名规则。使用这个仓库名后，GitHub 会把站点发布到 `https://<用户名>.github.io/`，根路径不需要追加子路径；绑定自定义域名 `maver.cn` 后，GitHub Pages 会根据仓库中的 `CNAME` 文件自动应用域名。
+
+项目仓库（例如 `blog`）也可以启用 Pages，但默认地址会带仓库路径，例如 `https://<用户名>.github.io/blog/`，需要额外处理 `baseurl` 和静态资源路径。当前站点配置为根路径部署，最省心的方式是使用 `<用户名>.github.io` 用户仓库。
+
 ### 域名
 
 - 自定义域名保留 `CNAME`
 - GitHub 默认域名需删除 `CNAME`，并将仓库命名为 `<用户名>.github.io`
+
+阿里云 DNS 中通常为自定义域名添加 `CNAME` 指向 `<用户名>.github.io`。域名生效后，建议在 GitHub Pages 设置中确认自定义域名和 HTTPS 证书状态。
+
+## 许可证
+
+本项目采用 [Apache License 2.0](LICENSE) 授权。
