@@ -497,6 +497,10 @@ blog.initPostToc = function () {
   aside.id = 'post-toc-panel'
   aside.setAttribute('aria-label', '文章目录')
 
+  var tocOverlay = document.createElement('div')
+  tocOverlay.className = 'post-toc-overlay'
+  tocOverlay.setAttribute('aria-hidden', 'true')
+
   var list = document.createElement('ul')
   list.className = 'post-toc-list'
   var links = []
@@ -516,7 +520,7 @@ blog.initPostToc = function () {
     link.onclick = function (event) {
       event.preventDefault()
       setActive(link)
-      closeToc()
+      setTocOpen(false)
       window.scrollTo(0, window.scrollY + heading.getBoundingClientRect().top - 16)
       if (history.replaceState) {
         history.replaceState({}, '', '#' + encodeURIComponent(heading.id))
@@ -532,16 +536,23 @@ blog.initPostToc = function () {
   tocToggle.onclick = function (event) {
     event.stopPropagation()
     var opened = !aside.classList.contains('open')
-    aside.classList.toggle('open', opened)
-    tocToggle.setAttribute('aria-expanded', opened ? 'true' : 'false')
+    setTocOpen(opened)
   }
 
   function closeToc() {
-    blog.removeClass(aside, 'open')
-    tocToggle.setAttribute('aria-expanded', 'false')
+    setTocOpen(false)
+  }
+
+  function setTocOpen(opened) {
+    aside.classList.toggle('open', opened)
+    tocOverlay.classList.toggle('show', opened)
+    document.body.classList.toggle('toc-open', opened)
+    tocToggle.setAttribute('aria-expanded', opened ? 'true' : 'false')
   }
 
   document.body.appendChild(aside)
+  document.body.appendChild(tocOverlay)
+  blog.addEvent(tocOverlay, 'click', closeToc)
   if (actions) {
     actions.appendChild(tocToggle)
     blog.addClass(actions, 'has-mobile-toc')
@@ -552,6 +563,19 @@ blog.initPostToc = function () {
       closeToc()
     }
   })
+
+  var desktopViewport = window.matchMedia('(min-width: 1200px)')
+  function resetOnDesktop(event) {
+    if (event.matches) {
+      setTocOpen(false)
+    }
+  }
+
+  if (desktopViewport.addEventListener) {
+    desktopViewport.addEventListener('change', resetOnDesktop)
+  } else if (desktopViewport.addListener) {
+    desktopViewport.addListener(resetOnDesktop)
+  }
 
   var ticking = false
 
