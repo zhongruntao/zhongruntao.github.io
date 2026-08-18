@@ -1,6 +1,6 @@
 source 'https://rubygems.org'
 
-gem 'jekyll',           '3.8.5'
+ruby '>= 3.3.0', '< 3.4'
+
+gem 'jekyll',           '4.4.1'
 gem 'fastimage',        '2.3.1'
-gem 'rouge',            '3.11.0'
-gem 'wdm',              '>= 0.1.0', install_if: Gem.win_platform?

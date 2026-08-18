@@ -1,6 +1,6 @@
 # 知行合一
 
-基于 Jekyll 3.8.5 的个人技术博客。站点为纯静态输出，适配手机、平板和桌面浏览器，通过 GitHub Pages Actions 自动部署。
+基于 Jekyll 4.4.1 的个人技术博客。站点为纯静态输出，适配手机、平板和桌面浏览器，通过 GitHub Pages Actions 自动部署。
 
 ## 功能特性
 
@@ -64,7 +64,7 @@
 
 环境要求：
 
-- Ruby 2.7+
+- Ruby 3.3.x
 - Bundler
 - Node.js 22+（仅生产构建压缩需要，与 GitHub Actions 保持一致）
 
@@ -334,7 +334,7 @@ extServiceWorker: true  # PWA 离线缓存
 
 ### GitHub Pages
 
-仓库提供 [.github/workflows/pages.yml](.github/workflows/pages.yml)，使用 Ruby 2.7、Bundler、Jekyll 3.8.5、Node.js 和 esbuild 构建并压缩站点。
+仓库提供 [.github/workflows/pages.yml](.github/workflows/pages.yml)，使用 Ruby 3.3、Bundler、Jekyll 4.4.1、Node.js 和 esbuild 构建并压缩站点。
 
 GitHub 仓库需要设置：
 
