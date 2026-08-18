@@ -1,36 +1,35 @@
 ---
 layout: null
 ---
-const version = '{{ site.time | date: "%Y%m%d%H%M%S" }}'
+const version = '{{ site.buildAt }}'
 const baseUrl = '{{ site.baseurl }}'
 const cachePrefix = 'blog_'
 const cacheKey = cachePrefix + version
+const precacheUrls = [
+  baseUrl + '/',
+  baseUrl + '/static/css/common.css',
+  baseUrl + '/static/css/theme-dark.css',
+  baseUrl + '/static/js/blog.js',
+  baseUrl + '/static/img/logo.webp'
+]
+const downloadPattern = /\.(?:rar|zip|7z|pdf)$/i
 
 self.addEventListener('install', function (event) {
   event.waitUntil(
-    fetch(baseUrl + '/index.html')
-      .then(function (response) {
-        if (!response.ok) {
-          throw new Error('HTTP ' + response.status)
-        }
-        return response.text()
-      })
-      .then(function (html) {
-        return caches.open(cacheKey).then(function (cache) {
-          const urls = collectCacheUrls(html)
-          return Promise.allSettled(
-            urls.map(function (url) {
-              return cache.add(url)
-            })
-          )
-        })
+    caches
+      .open(cacheKey)
+      .then(function (cache) {
+        return Promise.allSettled(
+          precacheUrls.map(function (url) {
+            return cache.add(url)
+          })
+        )
       })
       .then(function () {
         return self.skipWaiting()
       })
   )
 })
-
 self.addEventListener('activate', function (event) {
   event.waitUntil(
     caches
@@ -60,7 +59,8 @@ self.addEventListener('fetch', function (event) {
   }
 
   try {
-    if (new URL(request.url).origin !== self.origin) {
+    const requestUrl = new URL(request.url)
+    if (requestUrl.origin !== self.origin || downloadPattern.test(requestUrl.pathname)) {
       return
     }
   } catch (error) {
@@ -87,7 +87,7 @@ self.addEventListener('fetch', function (event) {
               return Response.error()
             }
 
-            return cache.match(baseUrl + '/index.html').then(function (homeResponse) {
+            return cache.match(baseUrl + '/').then(function (homeResponse) {
               return homeResponse || Response.error()
             })
           })
@@ -95,30 +95,3 @@ self.addEventListener('fetch', function (event) {
     })
   )
 })
-
-function collectCacheUrls(html) {
-  const pattern = /(href|src)=(?:"([^"]+)"|'([^']+)')/g
-  const urls = new Set([baseUrl + '/index.html'])
-  let match
-
-  while ((match = pattern.exec(html)) !== null) {
-    const value = match[2] || match[3]
-    if (!value) {
-      continue
-    }
-
-    try {
-      const url = new URL(value, self.registration.scope)
-      if (url.origin !== self.origin) {
-        continue
-      }
-      url.hash = ''
-      url.search = ''
-      urls.add(url.pathname)
-    } catch (error) {
-      // 无效资源地址不阻塞 Service Worker 安装
-    }
-  }
-
-  return Array.from(urls)
-}

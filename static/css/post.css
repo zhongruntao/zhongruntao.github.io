@@ -115,7 +115,7 @@
   margin: 0 4px;
   border-radius: 5px;
   color: #4d4d4c;
-  transition: all 500ms ease;
+  transition: background-color 500ms ease, color 500ms ease, box-shadow 500ms ease;
 }
 .page-post pre code {
   font-size: 13px;

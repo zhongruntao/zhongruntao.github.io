@@ -1,7 +1,8 @@
 @font-face {
-  font-family: 'Consolas';
-  font-display: fallback;
-  src: url('../font/consola.ttf');
+  font-family: 'Consolas Web';
+  font-display: swap;
+  src: local(Consolas), url('../font/consola.woff2') format('woff2');
+  unicode-range: U+0020-007E, U+00A0-00FF, U+2013-2014, U+2018-2019, U+201C-201D, U+2026, U+00B7, U+00B0;
 }
 
 html {
@@ -13,8 +14,8 @@ html {
   text-size-adjust: 100%;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: all 500ms ease;
-  font-family: Consolas, 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
+  transition: color 500ms ease, background-color 500ms ease;
+  font-family: 'Consolas Web', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', 'WenQuanYi Micro Hei', sans-serif;
 }
 body {
   max-width: 680px;

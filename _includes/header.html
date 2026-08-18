@@ -1,6 +1,6 @@
 <header class="header">
-	<img class="logo" src="{{ site.baseurl }}/static/img/logo.jpg"
-		alt="logo" />
+	<img class="logo" src="{{ site.baseurl }}/static/img/logo.webp"
+		width="40" height="40" alt="logo" fetchpriority="high" decoding="async" />
 	<nav class="menu">
 		{% for menu in site.menu -%} {%- assign target = "" %} {%- if
 		menu.target %} {% capture target %}target="{{ menu.target }}"{%

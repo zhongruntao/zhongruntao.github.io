@@ -1,4 +1,4 @@
-{%- assign buildAt = site.time | date: "%Y%m%d%H%M%S" -%}
+{%- assign buildAt = site.buildAt -%}
 <script type="text/javascript" src="{{site.baseurl}}/static/js/blog.js?t={{ buildAt }}"></script>
 {%- if page.search -%}
 <script type="text/javascript" src="{{site.baseurl}}/static/js/search.js?t={{ buildAt }}"></script>
