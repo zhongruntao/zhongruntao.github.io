@@ -251,6 +251,26 @@ Rouge 会按语言高亮，文章页会自动显示复制按钮。Mermaid 图使
 description: 一句话说明这篇文章解决什么问题。
 ```
 
+### 搜索平台验证
+
+`_config.yml` 中预留了三个验证字段，默认留空时不输出任何验证标签：
+
+```yaml
+googleSiteVerification: ''
+bingSiteVerification: ''
+baiduSiteVerification: ''
+```
+
+如果选择 HTML 标签验证，把平台给出的验证码填入对应字段并重新部署即可：
+
+| 平台 | 输出标签 |
+|---|---|
+| Google Search Console | `<meta name="google-site-verification">` |
+| Bing Webmaster Tools | `<meta name="msvalidate.01">` |
+| 百度搜索资源平台 | `<meta name="baidu-site-verification">` |
+
+Google 更推荐在阿里云 DNS 添加 TXT 记录，使用 Domain 属性验证 `maver.cn`，这样可以覆盖所有子域名和 HTTP / HTTPS 变体。Bing 支持从 Google Search Console 导入站点，通常最省事。
+
 ## 文章 MD5 链接
 
 `_plugins/md5_permalink.rb` 会在构建时为文章生成：

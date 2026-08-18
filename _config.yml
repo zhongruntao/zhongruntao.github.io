@@ -18,6 +18,11 @@ exclude: ['CNAME', 'README.md', 'LICENSE', '_site', 'dist', 'source-assets', 'Ge
 domainUrl: 'https://maver.cn'
 baseurl: ''
 
+# 搜索平台站点验证码；留空时不输出验证标签
+googleSiteVerification: ''
+bingSiteVerification: ''
+baiduSiteVerification: ''
+
 # 菜单
 menu:
   - title: 首页
